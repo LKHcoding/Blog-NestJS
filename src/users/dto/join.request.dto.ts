@@ -2,15 +2,15 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class JoinRequestDto {
   @ApiProperty({
-    example: 'LKHcoding@gmail.com',
+    example: 'NestMaster@gmail.com',
     description: '이메일',
     required: true,
   })
   public email: string;
 
   @ApiProperty({
-    example: 'LKHcoding',
-    description: 'LKH',
+    example: 'NestMaster',
+    description: 'nickname',
     required: true,
   })
   public nickname: string;
