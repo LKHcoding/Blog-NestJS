@@ -22,6 +22,6 @@ export class undefinedToNullInterceptor implements NestInterceptor {
 
     // return next
     // .handle()
-    // .pipe(map((data) => (data === undefined ? null : data)));
+    // .pipe(catchError);
   }
 }
