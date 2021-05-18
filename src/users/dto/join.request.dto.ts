@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsAlphanumeric, IsEmail, MaxLength } from 'class-validator';
 
 export class JoinRequestDto {
   @ApiProperty({
@@ -6,6 +7,7 @@ export class JoinRequestDto {
     description: '이메일',
     required: true,
   })
+  @IsEmail()
   public email: string;
 
   @ApiProperty({
@@ -13,6 +15,8 @@ export class JoinRequestDto {
     description: 'nickname',
     required: true,
   })
+  @IsAlphanumeric()
+  @MaxLength(10)
   public nickname: string;
 
   @ApiProperty({

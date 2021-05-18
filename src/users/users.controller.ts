@@ -34,7 +34,12 @@ export class UsersController {
   postUsers(@Body() data: JoinRequestDto) {
     // DTO : data transfer object 약자로, 데이터를 전달하는 오브젝트
     // @Body() -> express의 bodyparser 같은 역할
-    this.userService.postUsers(data.email, data.nickname, data.password);
+    const result = this.userService.postUsers(
+      data.email,
+      data.nickname,
+      data.password,
+    );
+    return result;
   }
 
   @ApiResponse({
