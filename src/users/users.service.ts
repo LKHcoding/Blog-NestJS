@@ -13,6 +13,10 @@ export class UsersService {
 
   getUser() {}
 
+  async findOneUser(email: string): Promise<Users | undefined> {
+    return this.usersRepository.findOne({ where: { email } });
+  }
+
   async postUsers(
     email: string,
     nickname: string,
