@@ -3,6 +3,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { ApiOperation } from '@nestjs/swagger';
 import { AppService } from './app.service';
 import { LocalAuthGuard } from './auth/local-auth.guard';
+import { AuthenticatedGuard } from './auth/authenticated.guard';
 
 // req, res에 대해 알고있는 영역
 @Controller()
@@ -13,6 +14,12 @@ export class AppController {
   @UseGuards(LocalAuthGuard)
   @Post('auth/login')
   async login(@Request() req) {
+    return { msg: 'Logged in!' };
+  }
+
+  @UseGuards(AuthenticatedGuard)
+  @Get('protected')
+  protected(@Request() req): string {
     return req.user;
   }
 

@@ -28,11 +28,12 @@ async function bootstrap() {
   app.use(cookieParser());
   app.use(
     session({
+      secret: process.env.COOKIE_SECRET,
       resave: false,
       saveUninitialized: false,
-      secret: process.env.COOKIE_SECRET,
       cookie: {
         httpOnly: true,
+        maxAge: 3600000,
       },
     }),
   );

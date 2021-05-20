@@ -10,6 +10,7 @@ export class AuthService {
     //비밀번호 받아와서 암호화 한다음에 비교해야함
 
     const user = await this.usersService.findOneUser(email);
+
     console.log('AuthService', await bcrypt.compare(password, user.password));
 
     if (user && (await bcrypt.compare(password, user.password))) {
