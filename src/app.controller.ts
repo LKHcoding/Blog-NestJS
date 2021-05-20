@@ -1,6 +1,13 @@
-import { Controller, Get, Post, UseGuards, Request } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  UseGuards,
+  Request,
+  Response,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiOperation } from '@nestjs/swagger';
+import { ApiCookieAuth, ApiOperation } from '@nestjs/swagger';
 import { AppService } from './app.service';
 import { LocalAuthGuard } from './auth/local-auth.guard';
 import { AuthenticatedGuard } from './auth/authenticated.guard';
@@ -21,6 +28,15 @@ export class AppController {
   @Get('protected')
   protected(@Request() req): string {
     return req.user;
+  }
+
+  @ApiCookieAuth('connect.sid')
+  @ApiOperation({ summary: '로그아웃' })
+  @UseGuards(AuthenticatedGuard)
+  @Post('logout')
+  async logout(@Response() res) {
+    res.clearCookie('connect.sid', { httpOnly: true });
+    return res.send('ok');
   }
 
   @Get()
