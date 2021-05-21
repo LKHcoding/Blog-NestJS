@@ -21,19 +21,20 @@ export class AppController {
   @UseGuards(LocalAuthGuard)
   @Post('auth/login')
   async login(@Request() req) {
-    return { msg: 'Logged in!' };
+    return { msg: 'Logged in!' }; // TODO: return jwt access token
   }
 
-  @UseGuards(AuthenticatedGuard)
+  // 세션 인증방식으로 할때 필요한 코드
+  // @UseGuards(AuthenticatedGuard)
   @Get('protected')
   protected(@Request() req): string {
-    return req.user;
+    return req.user; //TODO : require an bearer token, validate token
   }
 
   @ApiCookieAuth('connect.sid')
   @ApiOperation({ summary: '로그아웃' })
   @UseGuards(AuthenticatedGuard)
-  @Post('logout')
+  @Post('auth/logout')
   async logout(@Response() res) {
     res.clearCookie('connect.sid', { httpOnly: true });
     return res.send('ok');

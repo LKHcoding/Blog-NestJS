@@ -25,20 +25,21 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  app.use(cookieParser());
-  app.use(
-    session({
-      secret: process.env.COOKIE_SECRET,
-      resave: false,
-      saveUninitialized: false,
-      cookie: {
-        httpOnly: true,
-        maxAge: 3600000,
-      },
-    }),
-  );
-  app.use(passport.initialize());
-  app.use(passport.session());
+  // 세션 인증방식으로 할때 필요한 코드
+  // app.use(cookieParser());
+  // app.use(
+  //   session({
+  //     secret: process.env.COOKIE_SECRET,
+  //     resave: false,
+  //     saveUninitialized: false,
+  //     cookie: {
+  //       httpOnly: true,
+  //       maxAge: 3600000,
+  //     },
+  //   }),
+  // );
+  // app.use(passport.initialize());
+  // app.use(passport.session());
 
   await app.listen(port);
   console.log(`Listening on port ${port}`);
