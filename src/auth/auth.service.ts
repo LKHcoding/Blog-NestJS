@@ -38,7 +38,7 @@ export class AuthService {
       domain: 'localhost',
       path: '/',
       httpOnly: true,
-      maxAge: Number(process.env.JWT_MAX_AGE) * 1000,
+      maxAge: Number(process.env.COOKIE_MAX_AGE) * 1000,
     };
 
     // access token을 그대로 반환

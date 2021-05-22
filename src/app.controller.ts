@@ -27,7 +27,7 @@ export class AppController {
     // 반환된 Token 값을 쿠키에 저장합니다.
     // 저장하기 위하여 res가 필요합니다.
     res.cookie('Authentication', token, options);
-    res.send('ok');
+    res.send('login 성공');
   }
 
   // 세션 인증방식으로 할때 필요한 코드
@@ -38,11 +38,14 @@ export class AppController {
     return req.user; //TODO : require an bearer token, validate token
   }
 
+  @ApiCookieAuth('Authentication')
+  @ApiOperation({ summary: '로그아웃' })
   @Post('auth/logout')
   async logOut(@Res({ passthrough: true }) res: Response) {
     const { token, ...options } = await this.authService.logOut();
+    //   res.clearCookie('Authentication', { httpOnly: true });
     res.cookie('Authentication', token, options);
-    res.send('logout');
+    res.send('logout 성공');
   }
 
   // 세션 인증방식으로 할때 필요한 코드
