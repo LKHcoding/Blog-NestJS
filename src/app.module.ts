@@ -11,6 +11,8 @@ import { UsersService } from './users/users.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import * as ormconfig from '../ormconfig';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './auth/jwt-auth.guard';
 
 @Module({
   imports: [
@@ -23,7 +25,8 @@ import * as ormconfig from '../ormconfig';
     AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  // 전역 가드를 사용하여 이전에 만들었던 UsersController의 접근에 가드가 생성되어 Header인증 없이는 접속이 불가능 합니다.
+  providers: [AppService, { provide: APP_GUARD, useClass: JwtAuthGuard }],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): any {

@@ -24,5 +24,6 @@ export class JoinRequestDto {
     description: '비밀번호',
     required: true,
   })
+  @MaxLength(30)
   public password: string;
 }

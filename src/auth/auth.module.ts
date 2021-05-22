@@ -6,6 +6,9 @@ import { AuthService } from './auth.service';
 import { JwtStrategy } from './jwt.strategy';
 import { LocalStrategy } from './local.strategy';
 import { SessionSerializer } from './session.serializer';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 @Module({
   // 세션 인증방식으로 할때 필요한 코드
@@ -18,10 +21,10 @@ import { SessionSerializer } from './session.serializer';
     PassportModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET, // put env variables
-      signOptions: { expiresIn: '60s' },
+      signOptions: { expiresIn: process.env.JWT_EXPIRATION_TIME },
     }),
   ],
   providers: [AuthService, LocalStrategy, JwtStrategy],
-  exports: [AuthService],
+  exports: [AuthService, JwtModule],
 })
 export class AuthModule {}

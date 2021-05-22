@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Post, Req, Res } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Public } from 'src/common/decorators/skip-auth.decorator';
 import { User } from 'src/common/decorators/user.decorator';
 import { UserDto } from 'src/common/dto/user.dto';
 import { JoinRequestDto } from './dto/join.request.dto';
@@ -13,6 +14,11 @@ export class UsersController {
   // express라는 특정한 플랫폼에 맞게 작성된 코드들을 모두 수정해줘야 하니까
 
   constructor(private userService: UsersService) {}
+
+  @Get('all')
+  findAll() {
+    return this.userService.findAll();
+  }
 
   @ApiResponse({
     status: 200,
@@ -30,6 +36,7 @@ export class UsersController {
   }
 
   @ApiOperation({ summary: '회원가입' })
+  @Public()
   @Post()
   postUsers(@Body() data: JoinRequestDto) {
     // DTO : data transfer object 약자로, 데이터를 전달하는 오브젝트

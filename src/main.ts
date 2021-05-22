@@ -5,12 +5,15 @@ import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
+import dotenv from 'dotenv';
 
 declare const module: any;
+dotenv.config();
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const port = process.env.PORT || 3000;
+  app.use(cookieParser());
 
   // class-validator
   app.useGlobalPipes(
@@ -25,14 +28,13 @@ async function bootstrap() {
     .setTitle('Chat nestjs API')
     .setDescription('Chat nestjs 개발을 위한 api 문서입니다')
     .setVersion('1.0')
-    .addCookieAuth('connect.sid')
+    .addCookieAuth('Authentication')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
   // 세션 인증방식으로 할때 필요한 코드
-  // app.use(cookieParser());
   // app.use(
   //   session({
   //     secret: process.env.COOKIE_SECRET,

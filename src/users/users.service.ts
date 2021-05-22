@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from 'src/entities/Users';
 import { Repository } from 'typeorm';
@@ -11,11 +16,19 @@ export class UsersService {
     private usersRepository: Repository<Users>,
   ) {}
 
+  async findAll() {
+    const users = await this.usersRepository.find();
+    return users;
+  }
+
   getUser() {}
 
   async findOneUser(email: string): Promise<Users | undefined> {
     const user = await this.usersRepository.findOne({ where: { email } });
-    return user;
+    if (user) {
+      return user;
+    }
+    throw new HttpException('이메일이 존재하지 않습니다', HttpStatus.NOT_FOUND);
   }
 
   async postUsers(
