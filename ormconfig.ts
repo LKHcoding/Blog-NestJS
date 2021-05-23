@@ -18,6 +18,7 @@ const config: TypeOrmModuleOptions = {
   synchronize: true,
   logging: true,
   keepConnectionAlive: true,
+  timezone: '+09:00',
 };
 
 export = config;

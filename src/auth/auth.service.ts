@@ -3,6 +3,7 @@ import { UsersService } from 'src/users/users.service';
 import bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import dotenv from 'dotenv';
+import { CookieOptions } from 'express';
 
 dotenv.config();
 
@@ -14,11 +15,9 @@ export class AuthService {
   ) {}
 
   async validateUser(email: string, password: string): Promise<any> {
-    const user = await this.usersService.findOneUser(email);
+    const user = await this.usersService.findByEmail(email);
 
     //비밀번호 받아와서 암호화된 비밀번호랑 비교해야함.
-    // console.log('AuthService', await bcrypt.compare(password, user.password));
-
     if (user && (await bcrypt.compare(password, user.password))) {
       const { password, ...result } = user;
       return result;
@@ -33,27 +32,28 @@ export class AuthService {
 
     //이전 로직에서는 Access Token을 그대로 반환했지만 토큰만을 반환하여 cookie에 저장해야합니다.
     const token = this.jwtService.sign(payload);
-    return {
-      token,
+
+    const options: CookieOptions = {
       domain: 'localhost',
       path: '/',
       httpOnly: true,
-      maxAge: Number(process.env.COOKIE_MAX_AGE) * 1000,
+      maxAge: Number(process.env.COOKIE_MAX_AGE) * 24 * 60 * 1000,
+      secure: true,
+      sameSite: 'strict',
     };
-
-    // access token을 그대로 반환
-    // return {
-    //   acces_token: this.jwtService.sign(payload),
-    // };
+    return { token, options };
   }
 
   async logOut() {
-    return {
-      token: '',
+    const token = '';
+    const options: CookieOptions = {
       domain: 'localhost',
       path: '/',
       httpOnly: true,
       maxAge: 0,
+      secure: true,
+      sameSite: 'strict',
     };
+    return { token, options };
   }
 }

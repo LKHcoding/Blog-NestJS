@@ -10,9 +10,4 @@ dotenv.config();
 @Injectable()
 export class AppService {
   constructor(private usersService: UsersService) {}
-  getHello() {
-    this.usersService.getUser();
-    // return 'Hello World!';
-    return process.env.SECRET;
-  }
 }

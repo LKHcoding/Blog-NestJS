@@ -25,29 +25,21 @@ async function bootstrap() {
   );
 
   const config = new DocumentBuilder()
-    .setTitle('Chat nestjs API')
-    .setDescription('Chat nestjs 개발을 위한 api 문서입니다')
+    .setTitle('Blog nestjs API')
+    .setDescription('Blog 개발을 위한 nestjs api 문서입니다')
     .setVersion('1.0')
     .addCookieAuth('Authentication')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
-
-  // 세션 인증방식으로 할때 필요한 코드
-  // app.use(
-  //   session({
-  //     secret: process.env.COOKIE_SECRET,
-  //     resave: false,
-  //     saveUninitialized: false,
-  //     cookie: {
-  //       httpOnly: true,
-  //       maxAge: 3600000,
-  //     },
-  //   }),
-  // );
-  // app.use(passport.initialize());
-  // app.use(passport.session());
+  SwaggerModule.setup('api', app, document, {
+    swaggerOptions: {
+      tagsSorter: 'alpha',
+      operationsSorter: 'method',
+      // operationsSorter: 'alpha',
+      // defaultModelsExpandDepth: -1,
+    },
+  });
 
   await app.listen(port);
   console.log(`Listening on port ${port}`);
