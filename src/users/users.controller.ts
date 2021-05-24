@@ -7,6 +7,7 @@ import {
   Query,
   Req,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiNotFoundResponse,
@@ -16,6 +17,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { NotLoggedInGuard } from 'src/auth/not-logged-in.guard';
 import { Auth } from 'src/common/decorators/auth.decorator';
 import { User } from 'src/common/decorators/user.decorator';
 import { UserDto } from 'src/common/dto/user.dto';
@@ -82,6 +84,7 @@ export class UsersController {
   }
 
   @ApiOperation({ summary: '회원가입' })
+  @UseGuards(NotLoggedInGuard)
   @Post()
   postUsers(@Body() data: JoinRequestDto) {
     // DTO : data transfer object 약자로, 데이터를 전달하는 오브젝트

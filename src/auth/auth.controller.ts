@@ -16,6 +16,7 @@ import { Role } from 'src/common/decorators/role.decorator';
 import { UserRole } from 'src/entities/Users';
 import { RolesGuard } from './roles.guard';
 import { Auth } from 'src/common/decorators/auth.decorator';
+import { NotLoggedInGuard } from './not-logged-in.guard';
 
 // req, res에 대해 알고있는 영역
 @ApiTags('AUTH')
@@ -32,7 +33,7 @@ export class AuthController {
   @ApiBody({
     type: AuthLoginRequestDto,
   })
-  @UseGuards(LocalAuthGuard)
+  @UseGuards(LocalAuthGuard, NotLoggedInGuard)
   @Post('login')
   async login(@Request() req, @Res({ passthrough: true }) res: Response) {
     const { token, options } = await this.authService.login(req.user);
@@ -56,8 +57,6 @@ export class AuthController {
     status: 201,
     description: 'logout 성공',
   })
-  // @UseGuards(JwtAuthGuard, RolesGuard)
-  // @Role(UserRole.User, UserRole.Admin)
   @Auth(UserRole.User)
   @Post('logout')
   async logOut(@Res({ passthrough: true }) res: Response) {
