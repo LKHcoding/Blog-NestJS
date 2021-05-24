@@ -73,7 +73,6 @@ export class UsersController {
     description: '서버 에러',
   })
   @ApiOperation({ summary: '내 정보 조회' })
-  @Public()
   @Get()
   getUsers(@User() user) {
     return user;

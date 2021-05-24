@@ -28,7 +28,12 @@ export class AuthService {
 
   // jwt base setting
   async login(user: any) {
-    const payload = { email: user.email, sub: user.id };
+    const { id, password, ...payload } = await this.usersService.findByEmail(
+      user.email,
+    );
+    payload['sub'] = user.id;
+
+    // const payload = { email: user.email, sub: user.id };
 
     //이전 로직에서는 Access Token을 그대로 반환했지만 토큰만을 반환하여 cookie에 저장해야합니다.
     const token = this.jwtService.sign(payload);
