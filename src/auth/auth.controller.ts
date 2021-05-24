@@ -2,18 +2,20 @@ import { Controller, Get, Post, Res, UseGuards, Request } from '@nestjs/common';
 import {
   ApiBody,
   ApiCookieAuth,
-  ApiOkResponse,
   ApiOperation,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { Public } from 'src/common/decorators/skip-auth.decorator';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { LocalAuthGuard } from './local-auth.guard';
 
-import { CookieOptions, Response } from 'express';
+import { Response } from 'express';
 import { AuthLoginRequestDto } from './dto/auth-login.request.dto';
+import { Role } from 'src/common/decorators/role.decorator';
+import { UserRole } from 'src/entities/Users';
+import { RolesGuard } from './roles.guard';
+import { Auth } from 'src/common/decorators/auth.decorator';
 
 // req, res에 대해 알고있는 영역
 @ApiTags('AUTH')
@@ -30,7 +32,6 @@ export class AuthController {
   @ApiBody({
     type: AuthLoginRequestDto,
   })
-  @Public()
   @UseGuards(LocalAuthGuard)
   @Post('login')
   async login(@Request() req, @Res({ passthrough: true }) res: Response) {
@@ -43,10 +44,10 @@ export class AuthController {
   }
 
   @ApiCookieAuth('Authentication')
-  @UseGuards(JwtAuthGuard)
+  @Auth(UserRole.User)
   @Get('protected')
   protected(@Request() req): string {
-    return req.user; //TODO : require an bearer token, validate token
+    return req.user;
   }
 
   @ApiCookieAuth('Authentication')
@@ -55,6 +56,9 @@ export class AuthController {
     status: 201,
     description: 'logout 성공',
   })
+  // @UseGuards(JwtAuthGuard, RolesGuard)
+  // @Role(UserRole.User, UserRole.Admin)
+  @Auth(UserRole.User)
   @Post('logout')
   async logOut(@Res({ passthrough: true }) res: Response) {
     const { token, options } = await this.authService.logOut();

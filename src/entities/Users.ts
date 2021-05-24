@@ -7,6 +7,11 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+export enum UserRole {
+  User = 'user',
+  Admin = 'admin',
+}
+
 @Entity({ schema: 'nesttest', name: 'users' })
 export class Users {
   @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
@@ -21,6 +26,13 @@ export class Users {
   // @Column('varchar', { name: 'password', length: 100, select: false })
   @Column('varchar', { name: 'password', length: 100 })
   password: string;
+
+  @Column({
+    type: 'enum',
+    enum: UserRole,
+    default: UserRole.User,
+  })
+  role: UserRole;
 
   @CreateDateColumn()
   createdAt: Date;

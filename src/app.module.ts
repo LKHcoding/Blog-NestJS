@@ -18,8 +18,9 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
     AuthModule,
   ],
   controllers: [AppController],
-  // 전역 가드를 사용하여 이전에 만들었던 UsersController의 접근에 가드가 생성되어 Header인증 없이는 접속이 불가능 합니다.
-  providers: [AppService, { provide: APP_GUARD, useClass: JwtAuthGuard }],
+  // 전역 가드를 사용하여 전체 controller에 가드가 적용되어 Header인증 없이는 접속이 불가능 합니다.
+  // providers: [AppService, { provide: APP_GUARD, useClass: JwtAuthGuard }],
+  providers: [AppService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): any {

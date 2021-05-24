@@ -16,9 +16,10 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { Public } from 'src/common/decorators/skip-auth.decorator';
+import { Auth } from 'src/common/decorators/auth.decorator';
 import { User } from 'src/common/decorators/user.decorator';
 import { UserDto } from 'src/common/dto/user.dto';
+import { UserRole } from 'src/entities/Users';
 import { JoinRequestDto } from './dto/join.request.dto';
 import { UsersService } from './users.service';
 
@@ -54,6 +55,7 @@ export class UsersController {
     required: true,
     description: '불러올 페이지',
   })
+  @Auth(UserRole.Admin)
   @ApiOperation({ summary: '유저 전체 조회' })
   @Get('all')
   findAll(@Query() query) {
@@ -72,6 +74,7 @@ export class UsersController {
     status: 500,
     description: '서버 에러',
   })
+  @Auth(UserRole.User, UserRole.Admin)
   @ApiOperation({ summary: '내 정보 조회' })
   @Get()
   getUsers(@User() user) {
@@ -79,7 +82,6 @@ export class UsersController {
   }
 
   @ApiOperation({ summary: '회원가입' })
-  @Public()
   @Post()
   postUsers(@Body() data: JoinRequestDto) {
     // DTO : data transfer object 약자로, 데이터를 전달하는 오브젝트
@@ -91,23 +93,4 @@ export class UsersController {
     );
     return result;
   }
-
-  // @ApiResponse({
-  //   status: 200,
-  //   description: '성공',
-  //   type: UserDto,
-  // })
-  // @ApiOperation({ summary: '로그인' })
-  // @Post('login')
-  // logIn(@User() user) {
-  //   return user;
-  // }
-
-  // @ApiOperation({ summary: '로그아웃' })
-  // @Post('logout')
-  // logOut(@Req() req, @Res() res) {
-  //   req.logOut();
-  //   res.clearCookie('connect.sid', { httpOnly: true });
-  //   res.send('ok');
-  // }
 }

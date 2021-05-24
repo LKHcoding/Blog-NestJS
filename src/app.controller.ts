@@ -6,7 +6,6 @@ import { LocalAuthGuard } from './auth/local-auth.guard';
 import { AuthenticatedGuard } from './auth/authenticated.guard';
 import { AuthService } from './auth/auth.service';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
-import { Public } from './common/decorators/skip-auth.decorator';
 import { Response } from 'express';
 
 // req, res에 대해 알고있는 영역
