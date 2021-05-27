@@ -42,6 +42,7 @@ export class AuthController {
     //토큰을 쿠키에 등록해주기(express)
     res.cookie('Authentication', token, options);
     res.send('login 성공');
+    // return { token };
   }
 
   @ApiCookieAuth('Authentication')

@@ -12,24 +12,6 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const port = process.env.PORT || 3000;
 
-  //cors 설정
-  var whitelist = ['http://localhost:3031', 'https://www.example.com'];
-  app.enableCors({
-    origin: function (origin, callback) {
-      if (whitelist.indexOf(origin) !== -1) {
-        console.log('allowed cors for:', origin);
-        callback(null, true);
-      } else {
-        console.log('blocked cors for:', origin);
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
-    allowedHeaders:
-      'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept, Observe',
-    methods: 'GET,PUT,POST,DELETE,UPDATE,OPTIONS',
-    credentials: true,
-  });
-
   app.use(cookieParser());
 
   // class-validator
@@ -57,6 +39,33 @@ async function bootstrap() {
       // defaultModelsExpandDepth: -1,
     },
   });
+
+  //cors 설정
+  var whitelist = ['http://localhost:3030', 'https://www.example.com'];
+  app.enableCors(
+    // {
+    //   origin: function (origin, callback) {
+    //     if (whitelist.indexOf(origin) !== -1) {
+    //       console.log('allowed cors for:', origin);
+    //       callback(null, true);
+    //     } else {
+    //       console.log('blocked cors for:', origin);
+    //       callback(new Error('Not allowed by CORS'));
+    //     }
+    //   },
+    //   allowedHeaders:
+    //     'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept, Observe, application/json, Origin, Authorization, authorization, X-Forwarded-for',
+    //   methods: 'GET,PUT,POST,DELETE,UPDATE,OPTIONS',
+    //   credentials: true,
+    // },
+    {
+      origin: ['http://localhost:3030', 'http://localhost:3031'],
+      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+      preflightContinue: false,
+      optionsSuccessStatus: 204,
+      credentials: true,
+    },
+  );
 
   await app.listen(port);
   console.log(`Listening on port ${port}`);

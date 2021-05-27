@@ -57,7 +57,7 @@ export class UsersController {
     required: true,
     description: '불러올 페이지',
   })
-  @Auth(UserRole.Admin)
+  // @Auth(UserRole.Admin)
   @ApiOperation({ summary: '유저 전체 조회' })
   @Get('all')
   findAll(@Query() query) {
