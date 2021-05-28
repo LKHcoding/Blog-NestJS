@@ -40,9 +40,9 @@ export class AuthController {
     // 반환된 Token 값을 쿠키에 저장합니다.
     // 저장하기 위하여 res가 필요합니다.
     //토큰을 쿠키에 등록해주기(express)
-    res.cookie('Authentication', token, options);
-    res.send('login 성공');
-    // return { token };
+    // res.cookie('Authentication', token, options);
+    // res.send('login 성공');
+    return { token };
   }
 
   @ApiCookieAuth('Authentication')

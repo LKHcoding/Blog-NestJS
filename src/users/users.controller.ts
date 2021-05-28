@@ -76,8 +76,8 @@ export class UsersController {
     status: 500,
     description: '서버 에러',
   })
-  @Auth(UserRole.User, UserRole.Admin)
   @ApiOperation({ summary: '내 정보 조회' })
+  @Auth(UserRole.User)
   @Get()
   getUsers(@User() user) {
     return user;
