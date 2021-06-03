@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Res, UseGuards, Request } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Res,
+  UseGuards,
+  Request,
+  Body,
+} from '@nestjs/common';
 import {
   ApiBody,
   ApiCookieAuth,
@@ -17,6 +25,8 @@ import { UserRole } from 'src/entities/Users';
 import { RolesGuard } from './roles.guard';
 import { Auth } from 'src/common/decorators/auth.decorator';
 import { NotLoggedInGuard } from './not-logged-in.guard';
+import { GithubCodeDto } from 'src/common/dto/user.dto';
+import { UsersService } from 'src/users/users.service';
 
 // req, res에 대해 알고있는 영역
 @ApiTags('AUTH')
@@ -42,6 +52,7 @@ export class AuthController {
     //토큰을 쿠키에 등록해주기(express)
     // res.cookie('Authentication', token, options);
     // res.send('login 성공');
+    // console.log('로그인성공 token : ', token);
     return { token };
   }
 
@@ -61,10 +72,27 @@ export class AuthController {
   @Auth(UserRole.User)
   @Post('logout')
   async logOut(@Res({ passthrough: true }) res: Response) {
-    const { token, options } = await this.authService.logOut();
+    // passthrough 설명 참고 사이트
+    //https://min-ki.github.io/TIL/nestjs-controllers
+    // const { token, options } = await this.authService.logOut();
     // 쿠키 날리는 방식 2
     //   res.clearCookie('Authentication', { httpOnly: true });
-    res.cookie('Authentication', token, options);
-    res.send('logout 성공');
+    // res.cookie('Authentication', token, options);
+    // res.send('logout 성공');
+    return { data: 'logout 성공' };
+  }
+
+  @Post('github-info')
+  async getGithubInfo(@Body() githubCodeDto: GithubCodeDto) {
+    console.log(githubCodeDto);
+    const user = await this.authService.getGithubInfo(githubCodeDto);
+
+    return {
+      status: 200,
+      message: '깃허브 유저 정보를 조회하였습니다.',
+      data: {
+        user,
+      },
+    };
   }
 }

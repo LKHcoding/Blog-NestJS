@@ -20,9 +20,9 @@ import {
 import { NotLoggedInGuard } from 'src/auth/not-logged-in.guard';
 import { Auth } from 'src/common/decorators/auth.decorator';
 import { User } from 'src/common/decorators/user.decorator';
-import { UserDto } from 'src/common/dto/user.dto';
+import { GithubCodeDto, UserDto } from 'src/common/dto/user.dto';
 import { UserRole } from 'src/entities/Users';
-import { JoinRequestDto } from './dto/join.request.dto';
+import { LocalSignUpRequestDto } from './dto/local-sign-up.request.dto';
 import { UsersService } from './users.service';
 
 @ApiTags('USER')
@@ -86,7 +86,7 @@ export class UsersController {
   @ApiOperation({ summary: '회원가입' })
   @UseGuards(NotLoggedInGuard)
   @Post()
-  postUsers(@Body() data: JoinRequestDto) {
+  postUsers(@Body() data: LocalSignUpRequestDto) {
     // DTO : data transfer object 약자로, 데이터를 전달하는 오브젝트
     // @Body() -> express의 bodyParser 같은 역할
     const result = this.userService.postUsers(

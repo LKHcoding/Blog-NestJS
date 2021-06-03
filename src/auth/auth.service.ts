@@ -1,9 +1,11 @@
-import { Injectable } from '@nestjs/common';
-import { UsersService } from 'src/users/users.service';
+import { HttpException, Injectable } from '@nestjs/common';
+import { IGithubUserTypes, UsersService } from 'src/users/users.service';
 import bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import dotenv from 'dotenv';
 import { CookieOptions } from 'express';
+import { GithubCodeDto } from 'src/common/dto/user.dto';
+import axios from 'axios';
 
 dotenv.config();
 
@@ -14,8 +16,8 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(email: string, password: string): Promise<any> {
-    const user = await this.usersService.findByEmail(email);
+  async validateUser(loginID: string, password: string): Promise<any> {
+    const user = await this.usersService.findByLoginID(loginID);
 
     //비밀번호 받아와서 암호화된 비밀번호랑 비교해야함.
     if (user && (await bcrypt.compare(password, user.password))) {
@@ -28,12 +30,11 @@ export class AuthService {
 
   // jwt base setting
   async login(user: any) {
-    const { id, password, ...payload } = await this.usersService.findByEmail(
-      user.email,
+    const { password, ...payload } = await this.usersService.findByLoginID(
+      user.loginID,
     );
-    payload['sub'] = user.id;
 
-    // const payload = { email: user.email, sub: user.id };
+    console.log(payload);
 
     //이전 로직에서는 Access Token을 그대로 반환했지만 토큰만을 반환하여 cookie에 저장해야합니다.
     const token = this.jwtService.sign(payload);
@@ -67,5 +68,77 @@ export class AuthService {
       // sameSite: 'strict',
     };
     return { token, options };
+  }
+
+  //github 유저 인증하는곳
+  async getGithubInfo(githubCodeDto: GithubCodeDto) {
+    // 웹에서 query string으로 받은 code를 서버로 넘겨 받습니다.
+    const { code } = githubCodeDto;
+
+    // 깃허브 access token을 얻기 위한 요청 api 주소
+    const getTokenUrl: string = 'https://github.com/login/oauth/access_token';
+
+    // Body에는 Client ID, Client Secret,
+    // 웹에서 query string으로 받은 code를 넣어서 전달해주어야함
+    const request = {
+      code,
+      client_id: process.env.CLIENT_ID,
+      client_secret: process.env.CLIENT_SECRET,
+    };
+
+    const result = await axios
+      .post(getTokenUrl, request, {
+        headers: {
+          accept: 'application/json', // json으로 반환을 요청합니다.
+        },
+      })
+      .then((res) => res.data)
+      .catch((err) => console.log(err.message));
+
+    console.log(result);
+
+    if (!result) {
+      // 데이터가 없고 에러발생한경우
+      throw new HttpException('깃허브 인증을 실패했습니다.', 401);
+    }
+
+    // 요청이 성공한다면, access_token 키값의 토큰을 깃허브에서 넘겨줍니다.
+    const { access_token } = result;
+
+    // 깃허브 유저 조회 api 주소
+    const getUserUrl: string = 'https://api.github.com/user';
+
+    const { data } = await axios.get(getUserUrl, {
+      // 헤더에는 `token ${access_token}` 형식으로 넣어주어야 함
+      headers: {
+        Authorization: `token ${access_token}`,
+      },
+    });
+
+    console.log(data);
+    // 깃허브 유저 조회 api에서 받은 데이터들을 골라서 처리해줍니다.
+    const { id, login, email, name, blog, bio, avatar_url, html_url } = data;
+
+    // githubID: string;
+    // loginID: string;
+    // email: string;
+    // name: string;
+    // blog: string;
+    // bio: string;
+    // avatarUrl: string;
+    // githubPageUrl: string;
+
+    const githubInfo: IGithubUserTypes = {
+      githubID: id,
+      loginID: login,
+      email,
+      name,
+      blog,
+      bio,
+      avatarUrl: avatar_url,
+      githubPageUrl: html_url,
+    };
+
+    return githubInfo;
   }
 }
