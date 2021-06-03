@@ -34,13 +34,13 @@ export class AuthService {
       user.loginID,
     );
 
-    console.log(payload);
+    // console.log(payload);
 
     //이전 로직에서는 Access Token을 그대로 반환했지만 토큰만을 반환하여 cookie에 저장해야합니다.
     const token = this.jwtService.sign(payload);
 
     const options: CookieOptions = {
-      // domain: 'localhost', // 하위 도메인을 제외한 도메인이 일치하는 경우에만 쿠키 설정. defalt: loaded
+      domain: 'localhost', // 하위 도메인을 제외한 도메인이 일치하는 경우에만 쿠키 설정. defalt: loaded
       path: '/', // 경로. 주어진 경로의 하위 디렉토리에 있는 경우에만 쿠키 설정. defalt: '/' 는 전체.
       httpOnly: true, // http에서만 쿠키활용 가능. defalt: true
       maxAge: Number(process.env.COOKIE_MAX_AGE) * 24 * 60 * 1000,
@@ -48,7 +48,7 @@ export class AuthService {
       // expires: null, // 쿠키의 만료 시간을 표준 시간으로 설정
       // signed: , // 쿠키의 서명 여부
       // secure: true, // 주소가 "https"로 시작하는 경우에만 쿠키 생성
-      sameSite: 'none', // 서로 다른 도메인간의 쿠키 전송에 대한 보안을 설정. defalt: "Lax"
+      sameSite: 'strict', // 서로 다른 도메인간의 쿠키 전송에 대한 보안을 설정. defalt: "Lax"
       // "Strict" : 서로 다른 도메인에서 아예 전송 불가능. 보안성은 높으나 편의가 낮다.
       // "Lax" : 서로 다른 도메인이지만 일부 예외( HTTP get method / a href / link href )에서는 전송 가능.
       // "None" : 모든 도메인에서 전송 가능

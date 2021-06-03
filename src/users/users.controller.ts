@@ -10,6 +10,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import {
+  ApiCookieAuth,
   ApiNotFoundResponse,
   ApiOperation,
   ApiParam,
@@ -67,6 +68,8 @@ export class UsersController {
     return this.userService.findAll();
   }
 
+  // @ApiBearerAuth('Authentication')
+  @ApiCookieAuth('Authentication')
   @ApiResponse({
     status: 200,
     description: '성공',

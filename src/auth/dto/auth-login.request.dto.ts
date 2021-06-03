@@ -4,7 +4,7 @@ import { IsAlphanumeric, IsEmail, MaxLength, MinLength } from 'class-validator';
 @ApiHeader({ name: 'test' })
 export class AuthLoginRequestDto {
   @ApiProperty({
-    example: 'NestMaster',
+    example: 'test4',
     description: 'loginID',
     required: true,
   })
@@ -13,7 +13,7 @@ export class AuthLoginRequestDto {
   public loginID: string;
 
   @ApiProperty({
-    example: 'password123',
+    example: 'test4',
     description: '비밀번호(5~30자)',
     required: true,
   })
