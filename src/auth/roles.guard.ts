@@ -1,4 +1,10 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ROLES_KEY } from 'src/common/decorators/role.decorator';
 import { UserRole } from 'src/entities/Users';
@@ -30,7 +36,11 @@ export class RolesGuard implements CanActivate {
     if (!user) {
       // jwtAuthGuard에서 인증후에 user정보를 request에 넘겨준다.
       // user정보가 없으면 안됨.
-      return false;
+      // return false;
+      throw new HttpException(
+        'User 데이터가 없습니다.',
+        HttpStatus.UNAUTHORIZED,
+      );
     }
     if (user.role === UserRole.Admin) {
       //관리자 권한을 가진 계정은 @Auth(여기에 안써줘도) 모두 통과시킴

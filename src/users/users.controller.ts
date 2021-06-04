@@ -10,6 +10,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import {
+  ApiBody,
   ApiCookieAuth,
   ApiNotFoundResponse,
   ApiOperation,
@@ -21,7 +22,7 @@ import {
 import { NotLoggedInGuard } from 'src/auth/not-logged-in.guard';
 import { Auth } from 'src/common/decorators/auth.decorator';
 import { User } from 'src/common/decorators/user.decorator';
-import { GithubCodeDto, UserDto } from 'src/common/dto/user.dto';
+import { UserDto } from 'src/common/dto/user.dto';
 import { UserRole } from 'src/entities/Users';
 import { LocalSignUpRequestDto } from './dto/local-sign-up.request.dto';
 import { UsersService } from './users.service';
@@ -82,21 +83,20 @@ export class UsersController {
   @ApiOperation({ summary: '내 정보 조회' })
   @Auth(UserRole.User)
   @Get()
-  getUsers(@User() user) {
+  getUsers(@User() user: UserDto) {
     return user;
   }
 
-  @ApiOperation({ summary: '회원가입' })
+  @ApiOperation({ summary: 'Local 회원가입' })
+  @ApiBody({
+    type: LocalSignUpRequestDto,
+  })
   @UseGuards(NotLoggedInGuard)
   @Post()
-  postUsers(@Body() data: LocalSignUpRequestDto) {
+  postUsers(@Body() signUpUserData: LocalSignUpRequestDto) {
     // DTO : data transfer object 약자로, 데이터를 전달하는 오브젝트
     // @Body() -> express의 bodyParser 같은 역할
-    const result = this.userService.postUsers(
-      data.email,
-      data.nickname,
-      data.password,
-    );
+    const result = this.userService.postUsers(signUpUserData);
     return result;
   }
 }

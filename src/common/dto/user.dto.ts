@@ -2,16 +2,6 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsAlphanumeric, IsEmail, IsString, MaxLength } from 'class-validator';
 import { loginType, UserRole } from 'src/entities/Users';
 
-export class GithubCodeDto {
-  @ApiProperty({
-    required: true,
-    example: 'random token code string',
-    description: 'Github code',
-  })
-  @IsString()
-  readonly code: string;
-}
-
 export class UserDto {
   @ApiProperty({
     required: true,
@@ -26,7 +16,7 @@ export class UserDto {
   })
   @IsAlphanumeric()
   @MaxLength(10)
-  public githubID: string | null;
+  public githubID: number | null;
 
   @ApiProperty({
     example: 'NestMaster@gmail.com',
@@ -119,5 +109,5 @@ export class UserDto {
     description: '탈퇴 일자',
     required: true,
   })
-  public deletedAt: string;
+  public deletedAt: string | null;
 }

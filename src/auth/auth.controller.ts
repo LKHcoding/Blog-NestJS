@@ -21,19 +21,23 @@ import { LocalAuthGuard } from './local-auth.guard';
 import { Response } from 'express';
 import { AuthLoginRequestDto } from './dto/auth-login.request.dto';
 import { Role } from 'src/common/decorators/role.decorator';
-import { UserRole } from 'src/entities/Users';
+import { UserRole, Users } from 'src/entities/Users';
 import { RolesGuard } from './roles.guard';
 import { Auth } from 'src/common/decorators/auth.decorator';
 import { NotLoggedInGuard } from './not-logged-in.guard';
-import { GithubCodeDto } from 'src/common/dto/user.dto';
+import { GithubCodeDto } from 'src/common/dto/github-code.dto';
 import { UsersService } from 'src/users/users.service';
+import { UserDto } from 'src/common/dto/user.dto';
 
 // req, res에 대해 알고있는 영역
 @ApiTags('AUTH')
 @Controller('auth')
 export class AuthController {
   // AuthService의 login 함수를 사용하기 위하여 constructor에 선언해 줘야 합니다.
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private userService: UsersService,
+  ) {}
 
   @ApiOperation({ summary: '로그인' })
   @ApiResponse({
@@ -108,15 +112,35 @@ export class AuthController {
 
   @Post('github-info')
   async getGithubInfo(@Body() githubCodeDto: GithubCodeDto) {
-    console.log(githubCodeDto);
     const user = await this.authService.getGithubInfo(githubCodeDto);
+
+    //회원가입 시켜야 할지 말지 처리하는곳
+    const githubUserResult = await this.userService.githubSignUpUser(user);
+
+    //토큰 만들기 전 타입 변환
+    const convertedUser: UserDto = {
+      id: githubUserResult.id,
+      role: githubUserResult.role,
+      loginType: githubUserResult.loginType,
+      githubID: githubUserResult.githubID,
+      loginID: githubUserResult.loginID,
+      email: githubUserResult.email,
+      nickname: githubUserResult.nickname,
+      blog: githubUserResult.blog,
+      bio: githubUserResult.bio,
+      avatarUrl: githubUserResult.avatarUrl,
+      githubPageUrl: githubUserResult.githubPageUrl,
+      createdAt: githubUserResult.createdAt.toString(),
+      updatedAt: githubUserResult.updatedAt.toString(),
+      deletedAt: githubUserResult.deletedAt?.toString(),
+    };
+
+    const { token, options } = await this.authService.login(convertedUser);
 
     return {
       status: 200,
       message: '깃허브 유저 정보를 조회하였습니다.',
-      data: {
-        user,
-      },
+      token,
     };
   }
 }

@@ -1,13 +1,26 @@
 import { HttpException, Injectable } from '@nestjs/common';
-import { IGithubUserTypes, UsersService } from 'src/users/users.service';
+import { UsersService } from 'src/users/users.service';
 import bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import dotenv from 'dotenv';
 import { CookieOptions } from 'express';
-import { GithubCodeDto } from 'src/common/dto/user.dto';
 import axios from 'axios';
+import { GithubCodeDto } from 'src/common/dto/github-code.dto';
+import { UserDto } from 'src/common/dto/user.dto';
 
 dotenv.config();
+
+export interface IGithubUserTypes {
+  githubID: number;
+  nodeID: string;
+  loginID: string;
+  email: string;
+  name: string;
+  blog: string;
+  bio: string;
+  avatarUrl: string;
+  githubPageUrl: string;
+}
 
 @Injectable()
 export class AuthService {
@@ -29,15 +42,14 @@ export class AuthService {
   }
 
   // jwt base setting
-  async login(user: any) {
-    const { password, ...payload } = await this.usersService.findByLoginID(
-      user.loginID,
-    );
+  async login(user: UserDto) {
+    // const { password, ...payload } = await this.usersService.findByLoginID(
+    //   user.loginID,
+    // );
+    console.log('this is login user : ', user);
 
-    // console.log(payload);
-
-    //이전 로직에서는 Access Token을 그대로 반환했지만 토큰만을 반환하여 cookie에 저장해야합니다.
-    const token = this.jwtService.sign(payload);
+    // 토큰을 만들어서 프론트단에서 쿠키에 저장한다.
+    const token = this.jwtService.sign(user);
 
     const options: CookieOptions = {
       domain: 'localhost', // 하위 도메인을 제외한 도메인이 일치하는 경우에만 쿠키 설정. defalt: loaded
@@ -95,8 +107,6 @@ export class AuthService {
       .then((res) => res.data)
       .catch((err) => console.log(err.message));
 
-    console.log(result);
-
     if (!result) {
       // 데이터가 없고 에러발생한경우
       throw new HttpException('깃허브 인증을 실패했습니다.', 401);
@@ -115,9 +125,9 @@ export class AuthService {
       },
     });
 
-    console.log(data);
     // 깃허브 유저 조회 api에서 받은 데이터들을 골라서 처리해줍니다.
-    const { id, login, email, name, blog, bio, avatar_url, html_url } = data;
+    const { id, node_id, login, email, name, blog, bio, avatar_url, html_url } =
+      data;
 
     // githubID: string;
     // loginID: string;
@@ -130,6 +140,7 @@ export class AuthService {
 
     const githubInfo: IGithubUserTypes = {
       githubID: id,
+      nodeID: node_id,
       loginID: login,
       email,
       name,

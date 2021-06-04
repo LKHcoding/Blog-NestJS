@@ -25,25 +25,25 @@ export class Users {
   @Column({ type: 'int', name: 'githubID', default: null })
   githubID: number | null;
 
-  @Column('varchar', { name: 'email', length: 30 })
+  @Column('varchar', { name: 'email', length: 30, default: '' })
   email: string | null;
 
-  @Column('varchar', { name: 'nickname', length: 30 })
-  nickname: string;
+  @Column('varchar', { name: 'nickname', length: 30, default: '' })
+  nickname: string | null;
 
   @Column('varchar', { name: 'loginID', length: 30 })
-  loginID: string | null;
+  loginID: string;
 
-  @Column('varchar', { name: 'blog', length: 200 })
+  @Column('varchar', { name: 'blog', length: 200, default: '' })
   blog: string | null;
 
-  @Column('varchar', { name: 'bio', length: 200 })
+  @Column('varchar', { name: 'bio', length: 200, default: '' })
   bio: string | null;
 
-  @Column('varchar', { name: 'avatarUrl', length: 200 })
+  @Column('varchar', { name: 'avatarUrl', length: 200, default: '' })
   avatarUrl: string | null;
 
-  @Column('varchar', { name: 'githubPageUrl', length: 200 })
+  @Column('varchar', { name: 'githubPageUrl', length: 200, default: '' })
   githubPageUrl: string | null;
 
   // @Column('varchar', { name: 'password', length: 100, select: false })

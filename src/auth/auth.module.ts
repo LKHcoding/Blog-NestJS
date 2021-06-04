@@ -8,6 +8,8 @@ import { LocalStrategy } from './local.strategy';
 import { AuthController } from './auth.controller';
 import dotenv from 'dotenv';
 import { UsersService } from 'src/users/users.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Users } from 'src/entities/Users';
 
 dotenv.config();
 
@@ -20,8 +22,9 @@ dotenv.config();
       secret: process.env.JWT_SECRET, // put env variables
       signOptions: { expiresIn: process.env.JWT_EXPIRATION_TIME },
     }),
+    TypeOrmModule.forFeature([Users]),
   ],
-  providers: [AuthService, LocalStrategy, JwtStrategy],
+  providers: [AuthService, LocalStrategy, JwtStrategy, UsersService],
   exports: [AuthService, JwtModule],
   controllers: [AuthController],
 })

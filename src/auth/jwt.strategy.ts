@@ -3,6 +3,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import dotenv from 'dotenv';
 import { UsersService } from 'src/users/users.service';
 import { Injectable } from '@nestjs/common';
+import { UserDto } from 'src/common/dto/user.dto';
 
 dotenv.config();
 
@@ -26,19 +27,21 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: any) {
+  async validate(payload: UserDto) {
     // 이런 방식으로 유저정보 토큰에 같이 보낼수 있음.
     // const { password, ...user } = await this.usersService.findById(payload.sub);
 
-    return {
-      id: payload.id,
-      email: payload.email,
-      nickname: payload.nickname,
-      role: payload.role,
-      createdAt: payload.createdAt,
-      updatedAt: payload.updatedAt,
-      deletedAt: payload.deletedAt,
-      // ...user,
-    };
+    return payload;
+
+    // return {
+    //   id: payload.id,
+    //   email: payload.email,
+    //   nickname: payload.nickname,
+    //   role: payload.role,
+    //   createdAt: payload.createdAt,
+    //   updatedAt: payload.updatedAt,
+    //   deletedAt: payload.deletedAt,
+    //   // ...user,
+    // };
   }
 }
