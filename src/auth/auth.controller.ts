@@ -110,6 +110,7 @@ export class AuthController {
     return { data: 'logout 성공' };
   }
 
+  @UseGuards(NotLoggedInGuard)
   @Post('github-info')
   async getGithubInfo(@Body() githubCodeDto: GithubCodeDto) {
     const user = await this.authService.getGithubInfo(githubCodeDto);
