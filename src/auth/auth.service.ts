@@ -7,20 +7,10 @@ import { CookieOptions } from 'express';
 import axios from 'axios';
 import { GithubCodeDto } from 'src/common/dto/github-code.dto';
 import { UserDto } from 'src/common/dto/user.dto';
+import { IsNumber, IsString } from 'class-validator';
+import { GithubUserInfoDTO } from 'src/common/dto/github-user-info.dto';
 
 dotenv.config();
-
-export interface IGithubUserTypes {
-  githubID: number;
-  nodeID: string;
-  loginID: string;
-  email: string;
-  name: string;
-  blog: string;
-  bio: string;
-  avatarUrl: string;
-  githubPageUrl: string;
-}
 
 @Injectable()
 export class AuthService {
@@ -129,25 +119,16 @@ export class AuthService {
     const { id, node_id, login, email, name, blog, bio, avatar_url, html_url } =
       data;
 
-    // githubID: string;
-    // loginID: string;
-    // email: string;
-    // name: string;
-    // blog: string;
-    // bio: string;
-    // avatarUrl: string;
-    // githubPageUrl: string;
-
-    const githubInfo: IGithubUserTypes = {
+    const githubInfo: GithubUserInfoDTO = {
       githubID: id,
-      nodeID: node_id,
+      nodeID: node_id || '',
       loginID: login,
-      email,
-      name,
-      blog,
-      bio,
-      avatarUrl: avatar_url,
-      githubPageUrl: html_url,
+      email: email || '',
+      name: name || '',
+      blog: blog || '',
+      bio: bio || '',
+      avatarUrl: avatar_url || '',
+      githubPageUrl: html_url || '',
     };
 
     return githubInfo;

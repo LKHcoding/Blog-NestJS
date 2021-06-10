@@ -28,6 +28,7 @@ import { NotLoggedInGuard } from './not-logged-in.guard';
 import { GithubCodeDto } from 'src/common/dto/github-code.dto';
 import { UsersService } from 'src/users/users.service';
 import { UserDto } from 'src/common/dto/user.dto';
+import { GithubSignUpDto } from 'src/common/dto/github-signup.dto';
 
 // req, res에 대해 알고있는 영역
 @ApiTags('AUTH')
@@ -113,10 +114,57 @@ export class AuthController {
   @UseGuards(NotLoggedInGuard)
   @Post('github-info')
   async getGithubInfo(@Body() githubCodeDto: GithubCodeDto) {
+    // 깃허브 유저 정보 가져오는 곳
     const user = await this.authService.getGithubInfo(githubCodeDto);
 
+    // 깃허브 유저 정보로 회원가입 여부를 가져오는 곳(true는 가입된유저)
+    const isSignUpUser = await this.userService.findByGithubID(user.githubID);
+
+    if (isSignUpUser === false) {
+      return {
+        status: 200,
+        message: '아직 가입되지 않은 유저입니다.',
+        githubUserData: user,
+        isSignUpUser,
+      };
+    }
+
+    //토큰 만들기 전 타입 변환
+    const convertedUser: UserDto = {
+      id: isSignUpUser.id,
+      role: isSignUpUser.role,
+      loginType: isSignUpUser.loginType,
+      githubID: isSignUpUser.githubID,
+      loginID: isSignUpUser.loginID,
+      email: isSignUpUser.email,
+      nickname: isSignUpUser.nickname,
+      positionType: isSignUpUser.positionType,
+      blog: isSignUpUser.blog,
+      bio: isSignUpUser.bio,
+      avatarUrl: isSignUpUser.avatarUrl,
+      githubPageUrl: isSignUpUser.githubPageUrl,
+      createdAt: isSignUpUser.createdAt.toString(),
+      updatedAt: isSignUpUser.updatedAt.toString(),
+      deletedAt: isSignUpUser.deletedAt?.toString(),
+    };
+
+    const { token, options } = await this.authService.login(convertedUser);
+
+    return {
+      status: 200,
+      message: '깃허브 유저 정보를 조회하였습니다.',
+      token,
+    };
+  }
+
+  @UseGuards(NotLoggedInGuard)
+  @Post('github-signup')
+  async getGithubSignUp(@Body() githubSignUpDto: GithubSignUpDto) {
+    console.log(githubSignUpDto);
     //회원가입 시켜야 할지 말지 처리하는곳
-    const githubUserResult = await this.userService.githubSignUpUser(user);
+    const githubUserResult = await this.userService.githubSignUpUser(
+      githubSignUpDto,
+    );
 
     //토큰 만들기 전 타입 변환
     const convertedUser: UserDto = {
@@ -127,6 +175,7 @@ export class AuthController {
       loginID: githubUserResult.loginID,
       email: githubUserResult.email,
       nickname: githubUserResult.nickname,
+      positionType: githubUserResult.positionType,
       blog: githubUserResult.blog,
       bio: githubUserResult.bio,
       avatarUrl: githubUserResult.avatarUrl,
@@ -140,7 +189,7 @@ export class AuthController {
 
     return {
       status: 200,
-      message: '깃허브 유저 정보를 조회하였습니다.',
+      message: '깃허브 회원가입 성공 및 유저 정보를 조회하였습니다.',
       token,
     };
   }

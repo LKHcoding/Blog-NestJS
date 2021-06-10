@@ -17,6 +17,12 @@ export enum loginType {
   Github = 'github',
 }
 
+export enum DeveloperPositionType {
+  FrontEnd = 'FrontEnd',
+  BackEnd = 'BackEnd',
+  FullStack = 'FullStack',
+}
+
 @Entity({ schema: 'nesttest', name: 'users' })
 export class Users {
   @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
@@ -49,6 +55,12 @@ export class Users {
   // @Column('varchar', { name: 'password', length: 100, select: false })
   @Column('varchar', { name: 'password', length: 100 })
   password: string;
+
+  @Column({
+    type: 'enum',
+    enum: DeveloperPositionType,
+  })
+  positionType: DeveloperPositionType;
 
   @Column({
     type: 'enum',

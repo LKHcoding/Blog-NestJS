@@ -5,12 +5,17 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { loginType, UserRole, Users } from 'src/entities/Users';
+import {
+  DeveloperPositionType,
+  loginType,
+  UserRole,
+  Users,
+} from 'src/entities/Users';
 import { Repository } from 'typeorm';
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 import { LocalSignUpRequestDto } from './dto/local-sign-up.request.dto';
-import { IGithubUserTypes } from 'src/auth/auth.service';
+import { GithubSignUpDto } from 'src/common/dto/github-signup.dto';
 
 dotenv.config();
 
@@ -37,6 +42,14 @@ export class UsersService {
     );
   }
 
+  async findByGithubID(githubID: number): Promise<Users | false> {
+    const user = await this.usersRepository.findOne({ where: { githubID } });
+    if (user) {
+      return user;
+    }
+    return false;
+  }
+
   async findByLoginID(loginID: string): Promise<Users | undefined> {
     const user = await this.usersRepository.findOne({ where: { loginID } });
     if (user) {
@@ -48,37 +61,25 @@ export class UsersService {
     );
   }
 
-  async githubSignUpUser(githubUserData: IGithubUserTypes) {
-    // db에 github user가 회원가입 되어있는지 확인(깃허브 아이디값으로)
-    const user = await this.usersRepository.findOne({
-      where: { githubID: githubUserData.githubID },
+  async githubSignUpUser(githubSignUpDto: GithubSignUpDto) {
+    const returned = await this.usersRepository.save({
+      githubID: githubSignUpDto.githubUserInfo.githubID,
+      password: githubSignUpDto.githubUserInfo.nodeID,
+      loginID: githubSignUpDto.githubUserInfo.loginID,
+      positionType: githubSignUpDto.positionType,
+      email: githubSignUpDto.githubUserInfo.email || '',
+      nickname: githubSignUpDto.githubUserInfo.name,
+      blog: githubSignUpDto.githubUserInfo.blog,
+      bio: githubSignUpDto.githubUserInfo.bio,
+      avatarUrl: githubSignUpDto.githubUserInfo.avatarUrl,
+      githubPageUrl: githubSignUpDto.githubUserInfo.githubPageUrl,
+      loginType: loginType.Github,
+      role: UserRole.User,
     });
 
-    console.log(githubUserData);
-
-    // user가 없다면
-    if (!user) {
-      const returned = await this.usersRepository.save({
-        githubID: githubUserData.githubID,
-        password: githubUserData.nodeID,
-        loginID: githubUserData.loginID,
-        email: githubUserData.email || '',
-        nickname: githubUserData.name,
-        blog: githubUserData.blog,
-        bio: githubUserData.bio,
-        avatarUrl: githubUserData.avatarUrl,
-        githubPageUrl: githubUserData.githubPageUrl,
-        loginType: loginType.Github,
-        role: UserRole.User,
-      });
-      console.log('깃헙 유저 회원가입 : ', returned);
-      // delete returned.password;
-      return returned;
-    }
-
-    //유저가 가입되어 있다면 가입된 유저를 리턴한다.
-    // delete user.password;
-    return user;
+    console.log('깃헙 유저 회원가입 : ', returned);
+    // delete returned.password;
+    return returned;
   }
 
   async postUsers(

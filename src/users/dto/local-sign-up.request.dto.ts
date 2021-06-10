@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsAlphanumeric, IsEmail, MaxLength, MinLength } from 'class-validator';
+import { DeveloperPositionType } from 'src/entities/Users';
 
 export class LocalSignUpRequestDto {
   @ApiProperty({
@@ -52,4 +53,11 @@ export class LocalSignUpRequestDto {
   @MinLength(5)
   @MaxLength(30)
   public password: string;
+
+  @ApiProperty({
+    example: 'FrontEnd',
+    description: '개발 포지션 타입',
+    required: true,
+  })
+  public positionType: DeveloperPositionType;
 }

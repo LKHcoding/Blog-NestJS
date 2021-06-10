@@ -1,10 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsAlphanumeric, IsEmail, IsString, MaxLength } from 'class-validator';
-import { loginType, UserRole } from 'src/entities/Users';
+import { DeveloperPositionType, loginType, UserRole } from 'src/entities/Users';
 
 export class UserDto {
   @ApiProperty({
-    required: true,
     example: '1',
     description: 'Primary key ID',
   })
@@ -75,6 +74,15 @@ export class UserDto {
   public githubPageUrl: string | null;
 
   @ApiProperty({
+    example: 'FrontEnd',
+    description: '개발 포지션 타입',
+    type: 'enum',
+    enum: DeveloperPositionType,
+    required: true,
+  })
+  public positionType: DeveloperPositionType;
+
+  @ApiProperty({
     example: 'github',
     description: '로그인 type',
     type: 'enum',
@@ -83,6 +91,7 @@ export class UserDto {
   public loginType: loginType;
 
   @ApiProperty({
+    required: true,
     example: 'user',
     description: 'user의 권한',
     type: 'enum',
