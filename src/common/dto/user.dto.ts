@@ -74,7 +74,7 @@ export class UserDto {
   public githubPageUrl: string | null;
 
   @ApiProperty({
-    example: 'FrontEnd',
+    example: 'Front-End',
     description: '개발 포지션 타입',
     type: 'enum',
     enum: DeveloperPositionType,

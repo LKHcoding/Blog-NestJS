@@ -5,12 +5,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import {
-  DeveloperPositionType,
-  loginType,
-  UserRole,
-  Users,
-} from 'src/entities/Users';
+import { loginType, UserRole, Users } from 'src/entities/Users';
 import { Repository } from 'typeorm';
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';

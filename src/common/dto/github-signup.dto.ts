@@ -31,7 +31,7 @@ export class GithubSignUpDto {
   public githubUserInfo: GithubUserInfoDTO;
 
   @ApiProperty({
-    example: 'FrontEnd',
+    example: 'Front-End',
     description: '개발자 포지션 타입',
     type: 'enum',
     enum: DeveloperPositionType,

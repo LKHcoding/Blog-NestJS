@@ -18,9 +18,9 @@ export enum loginType {
 }
 
 export enum DeveloperPositionType {
-  FrontEnd = 'FrontEnd',
-  BackEnd = 'BackEnd',
-  FullStack = 'FullStack',
+  FrontEnd = 'Front-End',
+  BackEnd = 'Back-End',
+  FullStack = 'Full-Stack',
 }
 
 @Entity({ schema: 'nesttest', name: 'users' })

@@ -55,7 +55,7 @@ export class LocalSignUpRequestDto {
   public password: string;
 
   @ApiProperty({
-    example: 'FrontEnd',
+    example: 'Front-End',
     description: '개발 포지션 타입',
     required: true,
   })
