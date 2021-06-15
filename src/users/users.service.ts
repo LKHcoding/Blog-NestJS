@@ -23,6 +23,8 @@ export class UsersService {
 
   async findAll() {
     const users = await this.usersRepository.find();
+    // throw new HttpException('권한이 없습니다.2', HttpStatus.UNAUTHORIZED);
+
     return users;
   }
 

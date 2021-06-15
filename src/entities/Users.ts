@@ -3,9 +3,11 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { BlogPosts } from './BlogPosts';
 
 export enum UserRole {
   User = 'user',
@@ -84,4 +86,7 @@ export class Users {
 
   @DeleteDateColumn()
   deletedAt: Date | null;
+
+  @OneToMany(() => BlogPosts, (blogposts) => blogposts.User)
+  Posts: BlogPosts[];
 }

@@ -32,7 +32,6 @@ export class RolesGuard implements CanActivate {
     const { user } = context.switchToHttp().getRequest();
 
     // console.log(user.role);
-
     if (!user) {
       // jwtAuthGuard에서 인증후에 user정보를 request에 넘겨준다.
       // user정보가 없으면 안됨.
@@ -48,6 +47,13 @@ export class RolesGuard implements CanActivate {
     }
 
     // controller 위에 @Auth에 적어놓은 권한들만 들어올수있음(ex: @Auth(UserRole.Admin) 하면 어드민만 들어올 수 있는 곳)
-    return requiredRoles.includes(user.role); // 사용자의 role이 resource가 필요한 권한에 포함되어있는지 검사!
+    if (requiredRoles.includes(user.role)) {
+      // 사용자의 role이 resource가 필요한 권한에 포함되어있는지 검사!
+      return true;
+    } else {
+      throw new HttpException('권한이 없습니다.', HttpStatus.UNAUTHORIZED);
+    }
+
+    // return requiredRoles.includes(user.role); // 사용자의 role이 resource가 필요한 권한에 포함되어있는지 검사!
   }
 }

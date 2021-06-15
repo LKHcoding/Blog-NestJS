@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import dotenv from 'dotenv';
+import { HttpExceptionFilter } from './httpException.filter';
 
 declare const module: any;
 dotenv.config();
@@ -11,7 +12,6 @@ dotenv.config();
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const port = process.env.PORT || 3000;
-
   app.use(cookieParser());
 
   // class-validator
@@ -22,6 +22,8 @@ async function bootstrap() {
       transform: true, //데이터를 받아서 넘겨줄때 자동으로 타입을 변환해준다.
     }),
   );
+
+  app.useGlobalFilters(new HttpExceptionFilter());
 
   const config = new DocumentBuilder()
     .setTitle('Blog nestjs API')

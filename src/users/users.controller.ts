@@ -2,6 +2,8 @@ import {
   Body,
   Controller,
   Get,
+  HttpException,
+  HttpStatus,
   Param,
   Post,
   Query,
@@ -36,19 +38,6 @@ export class UsersController {
 
   constructor(private userService: UsersService) {}
 
-  @ApiOperation({ summary: '특정 유저 조회' })
-  @ApiParam({
-    name: 'id',
-    required: true,
-    description: '찾을 사용자 아이디',
-  })
-  @ApiNotFoundResponse({ description: '해당 id가 존재하지 않습니다' })
-  @Get('all/:id')
-  findById(@Query() query, @Param() param) {
-    // const user = await this.usersRepository.findOne({ where: { email } });
-    return this.userService.findById(param.id);
-  }
-
   @ApiQuery({
     name: 'perPage',
     required: true,
@@ -59,14 +48,34 @@ export class UsersController {
     required: true,
     description: '불러올 페이지',
   })
-  // @Auth(UserRole.Admin)
+  @Auth(UserRole.Admin)
   @ApiOperation({ summary: '유저 전체 조회' })
-  @Get('all')
-  findAll(@Query() query) {
+  @Get('/all')
+  async findAll(@Query() query) {
     //query 변수에 쿼리스트링으로 넘어온 값들이 들어온다.
     // 이걸 이용해서 select시 페이징 처리하여 리턴 할 수 있다.
     // 아직 하진 않았음.
-    return this.userService.findAll();
+    // throw new HttpException('권한이 없습니다.1', HttpStatus.UNAUTHORIZED);
+
+    return await this.userService.findAll();
+  }
+
+  @ApiOperation({ summary: '특정 유저 조회' })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: '찾을 사용자 아이디',
+  })
+  @ApiNotFoundResponse({ description: '해당 유저가 존재하지 않습니다' })
+  @Get('/:loginID')
+  async getOneUser(@Query() query, @Param() param) {
+    // const user = await this.usersRepository.findOne({ where: { email } });
+    console.log('this is getOneUser', param.loginID);
+    // const { password, ...userdata } = await this.userService.findById(param.id);
+    const { password, ...userdata } = await this.userService.findByLoginID(
+      param.loginID,
+    );
+    return userdata;
   }
 
   // @ApiBearerAuth('Authentication')
@@ -93,7 +102,7 @@ export class UsersController {
   })
   @UseGuards(NotLoggedInGuard)
   @Post()
-  postUsers(@Body() signUpUserData: LocalSignUpRequestDto) {
+  async postUsers(@Body() signUpUserData: LocalSignUpRequestDto) {
     // DTO : data transfer object 약자로, 데이터를 전달하는 오브젝트
     // @Body() -> express의 bodyParser 같은 역할
     const result = this.userService.postUsers(signUpUserData);

@@ -1,5 +1,11 @@
 import { ApiHeader, ApiProperty } from '@nestjs/swagger';
-import { IsAlphanumeric, IsEmail, MaxLength, MinLength } from 'class-validator';
+import {
+  IsAlphanumeric,
+  IsEmail,
+  IsNotEmpty,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
 
 @ApiHeader({ name: 'test' })
 export class AuthLoginRequestDto {
@@ -9,6 +15,7 @@ export class AuthLoginRequestDto {
     required: true,
   })
   @IsAlphanumeric()
+  @IsNotEmpty()
   @MaxLength(10)
   public loginID: string;
 
@@ -17,6 +24,7 @@ export class AuthLoginRequestDto {
     description: '비밀번호(5~30자)',
     required: true,
   })
+  @IsNotEmpty()
   @MinLength(5)
   @MaxLength(30)
   public password: string;

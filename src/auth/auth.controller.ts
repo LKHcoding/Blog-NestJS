@@ -50,7 +50,11 @@ export class AuthController {
   })
   @UseGuards(LocalAuthGuard, NotLoggedInGuard)
   @Post('login')
-  async login(@Request() req, @Res({ passthrough: true }) res: Response) {
+  async login(
+    @Request() req,
+    @Res({ passthrough: true }) res: Response,
+    @Body() body: AuthLoginRequestDto,
+  ) {
     const { token, options } = await this.authService.login(req.user);
     // 반환된 Token 값을 쿠키에 저장합니다.
     // 저장하기 위하여 res가 필요합니다.
@@ -74,7 +78,9 @@ export class AuthController {
   async swaggarLogin(
     @Request() req,
     @Res({ passthrough: true }) res: Response,
+    @Body() body: AuthLoginRequestDto,
   ) {
+    console.log('this is body : ', body);
     const { token, options } = await this.authService.login(req.user);
     // 반환된 Token 값을 쿠키에 저장합니다.
     // 저장하기 위하여 res가 필요합니다.

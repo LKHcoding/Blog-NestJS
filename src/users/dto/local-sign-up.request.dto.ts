@@ -1,6 +1,12 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsAlphanumeric, IsEmail, MaxLength, MinLength } from 'class-validator';
-import { DeveloperPositionType } from 'src/entities/Users';
+import { ApiProperty, OmitType } from '@nestjs/swagger';
+import {
+  IsAlphanumeric,
+  IsEmail,
+  IsString,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
+import { DeveloperPositionType, Users } from 'src/entities/Users';
 
 export class LocalSignUpRequestDto {
   @ApiProperty({
@@ -8,6 +14,7 @@ export class LocalSignUpRequestDto {
     description: '이메일',
     required: true,
   })
+  @MaxLength(30)
   @IsEmail()
   public email: string;
 
@@ -17,7 +24,7 @@ export class LocalSignUpRequestDto {
     required: true,
   })
   @IsAlphanumeric()
-  @MaxLength(10)
+  @MaxLength(30)
   public loginID: string;
 
   @ApiProperty({
@@ -26,23 +33,23 @@ export class LocalSignUpRequestDto {
     required: true,
   })
   @IsAlphanumeric()
-  @MaxLength(10)
+  @MaxLength(30)
   public nickname: string;
 
   @ApiProperty({
     example: 'http://blog.com',
     description: 'blog url',
   })
-  @IsAlphanumeric()
-  @MaxLength(150)
+  @IsString()
+  @MaxLength(200)
   public blog: string | null;
 
   @ApiProperty({
     example: '웹 개발자 입니다.',
     description: '자기소개',
   })
-  @IsAlphanumeric()
-  @MaxLength(150)
+  @IsString()
+  @MaxLength(200)
   public bio: string | null;
 
   @ApiProperty({
@@ -59,5 +66,6 @@ export class LocalSignUpRequestDto {
     description: '개발 포지션 타입',
     required: true,
   })
+  @IsString()
   public positionType: DeveloperPositionType;
 }
