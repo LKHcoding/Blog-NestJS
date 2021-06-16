@@ -6,12 +6,21 @@ import {
   ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
+  Unique,
   UpdateDateColumn,
 } from 'typeorm';
-import { BlogPosts } from './BlogPosts';
-import { DeveloperPositionType } from './Users';
+import { BlogPosts } from './blog-posts';
 
-@Entity({ schema: 'nesttest', name: 'blogPostsTags' })
+// 필요한  enum type같은건 각 entity별로 안에서 불러오자.
+// 밖에서 땡겨 썼다가 enum에 쿼리 안들어가서 헤맸음.
+export enum DeveloperPositionType {
+  FrontEnd = 'Front-End',
+  BackEnd = 'Back-End',
+  FullStack = 'Full-Stack',
+}
+
+@Unique(['tagName', 'positionType'])
+@Entity({ schema: 'nesttest', name: 'blog-posts-tags' })
 export class BlogPostsTags {
   @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
   id: number;
@@ -22,7 +31,6 @@ export class BlogPostsTags {
   @Column({
     type: 'enum',
     enum: DeveloperPositionType,
-    enumName: 'positionType',
   })
   positionType: DeveloperPositionType;
 

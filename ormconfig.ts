@@ -1,8 +1,8 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { Users } from './src/entities/Users';
 import dotenv from 'dotenv';
-import { BlogPosts } from 'src/entities/BlogPosts';
-import { BlogPostsTags } from 'src/entities/BlogPostsTags';
+import { BlogPosts } from 'src/entities/blog-posts';
+import { BlogPostsTags } from 'src/entities/blog-posts-tags';
 
 dotenv.config();
 const config: TypeOrmModuleOptions = {

@@ -12,11 +12,11 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { BlogPostsTags } from './BlogPostsTags';
+import { BlogPostsTags } from './blog-posts-tags';
 import { Users } from './Users';
 
 @Index('UserId', ['UserId'], {})
-@Entity({ schema: 'nesttest', name: 'blogPosts' })
+@Entity({ schema: 'nesttest', name: 'blog-posts' })
 export class BlogPosts {
   @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
   id: number;
@@ -24,8 +24,12 @@ export class BlogPosts {
   @Column('varchar', { name: 'title', length: 50 })
   title: string;
 
-  @Column('simple-array', { name: 'tags' })
-  tags: string[];
+  // @Column('simple-array', { name: 'tags' })
+  // tags: string[];
+
+  @ManyToMany(() => BlogPostsTags)
+  @JoinTable()
+  Tags: BlogPostsTags[];
 
   @Column('varchar', { name: 'content', length: 1500 })
   content: string;

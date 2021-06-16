@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { BlogPosts } from './BlogPosts';
+import { BlogPosts } from './blog-posts';
 
 export enum UserRole {
   User = 'user',
