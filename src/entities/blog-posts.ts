@@ -24,14 +24,20 @@ export class BlogPosts {
   @Column('varchar', { name: 'title', length: 50 })
   title: string;
 
-  // @Column('simple-array', { name: 'tags' })
-  // tags: string[];
-
   @ManyToMany(() => BlogPostsTags, (blogPostsTags) => blogPostsTags.BlogPosts)
   @JoinTable()
   Tags: BlogPostsTags[];
 
-  @Column('varchar', { name: 'content', length: 1500 })
+  // content 는 MarkDown 형식의 내용이 들어가기때문에
+  // utf8mb4_unicode_ci 형식이 되어야한다.
+  // 근데 typeorm으로 자동으로 처리되지 않을 수 있으니 안되는경우 직접 디비에 설정할것
+  @Column({
+    type: 'varchar',
+    name: 'content',
+    length: 1500,
+    charset: 'utf8mb4',
+    collation: 'utf8mb4_unicode_ci',
+  })
   content: string;
 
   @Column('int', { name: 'UserId', nullable: false })

@@ -7,17 +7,27 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+import { Auth } from 'src/common/decorators/auth.decorator';
+import { User } from 'src/common/decorators/user.decorator';
+import { UserDto } from 'src/common/dto/user.dto';
+import { UserRole } from 'src/entities/Users';
 import { BlogService } from './blog.service';
-import { CreateBlogDto } from './dto/create-blog.dto';
+import { CreateBlogPostDto } from './dto/create-blog-post.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
 
+@ApiTags('BLOG')
 @Controller('api/blog')
 export class BlogController {
   constructor(private readonly blogService: BlogService) {}
 
+  @Auth(UserRole.User)
   @Post()
-  create(@Body() createBlogDto: CreateBlogDto) {
-    return this.blogService.create(createBlogDto);
+  async createNewPost(
+    @Body() createBlogPostData: CreateBlogPostDto,
+    @User() user: UserDto,
+  ) {
+    return await this.blogService.createPost(createBlogPostData, user);
   }
 
   //글쓰기 테스트
