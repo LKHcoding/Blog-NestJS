@@ -34,6 +34,9 @@ export class BlogPostsTags {
   })
   positionType: DeveloperPositionType;
 
+  @ManyToMany(() => BlogPosts, (blogPosts) => blogPosts.Tags)
+  BlogPosts: BlogPosts[];
+
   @CreateDateColumn()
   createdAt: Date;
 

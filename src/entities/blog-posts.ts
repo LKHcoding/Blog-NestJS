@@ -27,7 +27,7 @@ export class BlogPosts {
   // @Column('simple-array', { name: 'tags' })
   // tags: string[];
 
-  @ManyToMany(() => BlogPostsTags)
+  @ManyToMany(() => BlogPostsTags, (blogPostsTags) => blogPostsTags.BlogPosts)
   @JoinTable()
   Tags: BlogPostsTags[];
 

@@ -20,14 +20,16 @@ export class BlogController {
     return this.blogService.create(createBlogDto);
   }
 
+  //글쓰기 테스트
   @Get()
   findAll() {
     return this.blogService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.blogService.findOne(+id);
+  //하나의 태그에 게시된 글들 뭐있는지 조회해보기
+  @Post('/:tag')
+  findOne(@Param('tag') tag: string) {
+    return this.blogService.findOne(tag);
   }
 
   @Patch(':id')

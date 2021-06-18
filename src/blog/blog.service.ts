@@ -45,7 +45,7 @@ export class BlogService {
     // 이미 디비에 존재하는 태그는 저장하면 안되니 빼주는 로직
     for (let idx = newTagListObj.length - 1; 0 <= idx; idx--) {
       existTags.map((item) => {
-        if (newTagListObj[idx].tagName === item.tagName) {
+        if (newTagListObj[idx]?.tagName === item?.tagName) {
           if (newTagListObj[idx].positionType === item.positionType) {
             newTagListObj.splice(idx, 1);
           }
@@ -74,8 +74,19 @@ export class BlogService {
     return await this.blogPostsRepository.find({ relations: ['Tags'] });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} blog`;
+  async findOne(tag: string) {
+    // const categoriesWithQuestions = await connection
+    // .getRepository(Category)
+    // .createQueryBuilder("category")
+    // .leftJoinAndSelect("category.questions", "question")
+    // .getMany();
+
+    //하나의 태그를 어떤 게시물들에서 사용했는지 게시물 다 가져오기
+    return await this.blogPostsTagsRepository
+      .createQueryBuilder('blog-posts-tags')
+      .where('blog-posts-tags.tagName = :tag', { tag })
+      .leftJoinAndSelect('blog-posts-tags.BlogPosts', 'blog-posts')
+      .getMany();
   }
 
   update(id: number, updateBlogDto: UpdateBlogDto) {
