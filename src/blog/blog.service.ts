@@ -67,53 +67,17 @@ export class BlogService {
     return result;
   }
 
-  async findAll() {
-    // 임의로 입력받은 태그 리스트
-    const TagList = ['tag', 'tag2', 'tag3'];
-
-    // 객체 형태로 바꿔주기
-    const newTagListObj = TagList.map((item) => {
-      let newItem = new BlogPostsTags();
-      newItem.tagName = item;
-      newItem.positionType = DeveloperPositionType.FrontEnd;
-      return newItem;
-    });
-
-    // 이미 존재 하는 태그들 조회해보기
-    const existTags = await this.blogPostsTagsRepository.find({
-      where: newTagListObj,
-    });
-
-    // 이미 디비에 존재하는 태그는 저장하면 안되니 빼주는 로직
-    for (let idx = newTagListObj.length - 1; 0 <= idx; idx--) {
-      existTags.map((item) => {
-        if (newTagListObj[idx]?.tagName === item?.tagName) {
-          if (newTagListObj[idx].positionType === item.positionType) {
-            newTagListObj.splice(idx, 1);
-          }
-        }
-      });
-    }
-
-    // 존재하지 않는 태그는 Save 해주기
-    let savedTags = null;
-    if (newTagListObj.length !== 0) {
-      savedTags = await this.blogPostsTagsRepository.save(newTagListObj);
-    }
-
-    console.log('---------------------------------', newTagListObj);
-
-    const Post = new BlogPosts();
-    Post.Tags = savedTags !== null ? savedTags : existTags;
-    Post.title = 'title2';
-    Post.content = 'content2';
-    Post.User = await this.usersService.findByLoginID('LKHcoding');
-    Post.UserId = (await this.usersService.findByLoginID('LKHcoding')).id;
-
-    const result = await this.blogPostsRepository.save(Post);
-
-    return result;
-    return await this.blogPostsRepository.find({ relations: ['Tags'] });
+  async findTagsInfoList(userID: string) {
+    // 태그별 글 개수를 구하고 싶지만 typeorm으로 구하기 쉽지않다.
+    // 데이터를 넘겨받은 다음 BlogPosts 의 length로 개수를 구할 수 있다.
+    return await this.blogPostsTagsRepository
+      .createQueryBuilder('tagList')
+      .leftJoin('tagList.BlogPosts', 'posts')
+      .leftJoin('posts.User', 'user')
+      .where('user.loginID = :loginID', { loginID: userID })
+      .select('tagList.tagName')
+      .addSelect('posts.id')
+      .getMany();
   }
 
   async findOne(tag: string) {
