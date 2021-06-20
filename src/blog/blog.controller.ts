@@ -33,12 +33,6 @@ export class BlogController {
   @Get('tags-info/:userID')
   async getTagsInfoList(@Param('userID') userID: string) {
     return await this.blogService.findTagsInfoList(userID);
-
-    // return await (
-    //   await this.blogService.findPostsInfoList(userID)
-    // ).map((item) => {
-    //   return { ...item, BlogPosts: item.BlogPosts.length };
-    // });
   }
 
   //하나의 태그에 게시된 글들 뭐있는지 조회해보기

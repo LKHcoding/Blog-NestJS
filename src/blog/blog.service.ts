@@ -70,7 +70,7 @@ export class BlogService {
   async findTagsInfoList(userID: string) {
     // 태그별 글 개수를 구하고 싶지만 typeorm으로 구하기 쉽지않다.
     // 데이터를 넘겨받은 다음 BlogPosts 의 length로 개수를 구할 수 있다.
-    return await this.blogPostsTagsRepository
+    const tagInfoResult = await this.blogPostsTagsRepository
       .createQueryBuilder('tagList')
       .leftJoin('tagList.BlogPosts', 'posts')
       .leftJoin('posts.User', 'user')
@@ -78,6 +78,15 @@ export class BlogService {
       .select('tagList.tagName')
       .addSelect('posts.id')
       .getMany();
+
+    //전체 글 갯수 구하기
+    const allPostCount = await this.blogPostsRepository
+      .createQueryBuilder('posts')
+      .leftJoin('posts.User', 'user')
+      .where('user.loginID = :loginID', { loginID: userID })
+      .getCount();
+
+    return { tagInfoResult, allPostCount };
   }
 
   async findOne(tag: string) {
