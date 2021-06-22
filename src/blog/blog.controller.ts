@@ -55,6 +55,7 @@ export class BlogController {
     return file.path;
   }
 
+  // 글쓰기
   @Auth(UserRole.User)
   @Post()
   async createNewPost(
@@ -64,15 +65,16 @@ export class BlogController {
     return await this.blogService.createPost(createBlogPostData, user);
   }
 
+  // 유저별 태그 정보
   @Get('tags-info/:userID')
   async getTagsInfoList(@Param('userID') userID: string) {
     return await this.blogService.findTagsInfoList(userID);
   }
 
-  //하나의 태그에 게시된 글들 뭐있는지 조회해보기
-  @Post('/:tag')
-  findOne(@Param('tag') tag: string) {
-    return this.blogService.findOne(tag);
+  // 유저별 게시물 정보
+  @Get('posts-info/:userID')
+  async getPostsInfoList(@Param('userID') userID: string) {
+    return await this.blogService.findPostsInfoList(userID);
   }
 
   @Patch(':id')

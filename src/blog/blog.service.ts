@@ -68,6 +68,7 @@ export class BlogService {
     return result;
   }
 
+  // 태그별 게시물 수 구하기
   async findTagsInfoList(userID: string) {
     // 태그별 글 개수를 구하고 싶지만 typeorm으로 구하기 쉽지않다.
     // 데이터를 넘겨받은 다음 BlogPosts 의 length로 개수를 구할 수 있다.
@@ -90,13 +91,21 @@ export class BlogService {
     return { tagInfoResult, allPostCount };
   }
 
-  async findOne(tag: string) {
-    //하나의 태그를 어떤 게시물들에서 사용했는지 게시물 다 가져오기
-    return await this.blogPostsTagsRepository
-      .createQueryBuilder('blog-posts-tags')
-      .where('blog-posts-tags.tagName IN (:...tags)', { tags: [tag, 'tag2'] })
-      .leftJoinAndSelect('blog-posts-tags.BlogPosts', 'blog-posts')
+  async findPostsInfoList(userID: string) {
+    return await this.blogPostsRepository
+      .createQueryBuilder('posts')
+      .leftJoin('posts.Tags', 'tags')
+      .leftJoin('posts.User', 'user')
+      .where('user.loginID = :loginID', { loginID: userID })
+      .addSelect('tags.tagName')
       .getMany();
+
+    //하나의 태그를 어떤 게시물들에서 사용했는지 게시물 다 가져오기
+    // return await this.blogPostsTagsRepository
+    //   .createQueryBuilder('blog-posts-tags')
+    //   .where('blog-posts-tags.tagName IN (:...tags)', { tags: [tag, 'tag2'] })
+    //   .leftJoinAndSelect('blog-posts-tags.BlogPosts', 'blog-posts')
+    //   .getMany();
   }
 
   update(id: number, updateBlogDto: UpdateBlogDto) {
