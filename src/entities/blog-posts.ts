@@ -40,6 +40,9 @@ export class BlogPosts {
   })
   content: string;
 
+  @Column('varchar', { name: 'thumbnail', length: 40 })
+  thumbnail: string;
+
   @Column('int', { name: 'UserId', nullable: false })
   UserId: number;
 

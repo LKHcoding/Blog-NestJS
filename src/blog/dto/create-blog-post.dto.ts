@@ -11,4 +11,7 @@ export class CreateBlogPostDto {
   @MaxLength(1500)
   @IsString()
   content: string;
+
+  @IsString()
+  thumbnail: string;
 }

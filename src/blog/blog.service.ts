@@ -23,7 +23,7 @@ export class BlogService {
   ) {}
 
   async createPost(createBlogPostData: CreateBlogPostDto, user: UserDto) {
-    const { title, tags, content } = createBlogPostData;
+    const { title, tags, content, thumbnail } = createBlogPostData;
 
     // 각 태그를 BlogPostsTags 객체 형태로 바꿔주기
     const newTagListObj = tags.map((tagItem) => {
@@ -59,6 +59,7 @@ export class BlogService {
     Post.Tags = savedTags !== null ? [...savedTags, ...existTags] : existTags;
     Post.title = title;
     Post.content = content;
+    Post.thumbnail = thumbnail;
     // Post.User = user;
     Post.UserId = user.id;
 
