@@ -22,6 +22,7 @@ export class BlogService {
     private usersService: UsersService,
   ) {}
 
+  //글쓰기
   async createPost(createBlogPostData: CreateBlogPostDto, user: UserDto) {
     const { title, tags, content, thumbnail } = createBlogPostData;
 
@@ -91,6 +92,7 @@ export class BlogService {
     return { tagInfoResult, allPostCount };
   }
 
+  //유저별 전체 게시물 정보 리스트
   async findPostsInfoList(userID: string) {
     return await this.blogPostsRepository
       .createQueryBuilder('posts')
@@ -106,6 +108,15 @@ export class BlogService {
     //   .where('blog-posts-tags.tagName IN (:...tags)', { tags: [tag, 'tag2'] })
     //   .leftJoinAndSelect('blog-posts-tags.BlogPosts', 'blog-posts')
     //   .getMany();
+  }
+
+  async findPostInfo(postId: string) {
+    return await this.blogPostsRepository
+      .createQueryBuilder('post')
+      .leftJoin('post.Tags', 'tags')
+      .where('post.id = :postId', { postId })
+      .addSelect('tags.tagName')
+      .getOne();
   }
 
   update(id: number, updateBlogDto: UpdateBlogDto) {

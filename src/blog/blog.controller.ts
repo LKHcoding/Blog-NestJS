@@ -35,6 +35,7 @@ export class BlogController {
   constructor(private readonly blogService: BlogService) {}
 
   //이미지 업로드 처리
+  @Auth(UserRole.User)
   @UseInterceptors(
     FileInterceptor('image', {
       storage: multer.diskStorage({
@@ -71,10 +72,16 @@ export class BlogController {
     return await this.blogService.findTagsInfoList(userID);
   }
 
-  // 유저별 게시물 정보
+  // 유저별 전체 게시물 정보
   @Get('posts-info/:userID')
   async getPostsInfoList(@Param('userID') userID: string) {
     return await this.blogService.findPostsInfoList(userID);
+  }
+
+  // 유저별 특정 게시물 정보
+  @Get('post-info/:postId')
+  async getOnePostInfo(@Param('postId') postId: string) {
+    return await this.blogService.findPostInfo(postId);
   }
 
   @Patch(':id')
