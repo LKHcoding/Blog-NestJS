@@ -32,15 +32,15 @@ export class BlogPosts {
   // utf8mb4_unicode_ci 형식이 되어야한다.
   // 근데 typeorm으로 자동으로 처리되지 않을 수 있으니 안되는경우 직접 디비에 설정할것
   @Column({
-    type: 'varchar',
+    type: 'text',
     name: 'content',
-    length: 1500,
+    // length: 3500,
     charset: 'utf8mb4',
     collation: 'utf8mb4_unicode_ci',
   })
   content: string;
 
-  @Column('varchar', { name: 'thumbnail', length: 40 })
+  @Column('varchar', { name: 'thumbnail', length: 100 })
   thumbnail: string;
 
   @Column('int', { name: 'UserId', nullable: false })

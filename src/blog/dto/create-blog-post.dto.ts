@@ -8,7 +8,7 @@ export class CreateBlogPostDto {
   @IsArray()
   tags: string[];
 
-  @MaxLength(1500)
+  @MaxLength(65535)
   @IsString()
   content: string;
 
