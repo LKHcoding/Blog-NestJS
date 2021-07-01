@@ -12,6 +12,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { BlogPostsLikeDislike } from './blog-posts-likeDislike';
 import { BlogPostsTags } from './blog-posts-tags';
 import { Users } from './Users';
 
@@ -49,6 +50,9 @@ export class BlogPosts {
   @ManyToOne(() => Users, (users) => users.id)
   @JoinColumn([{ name: 'UserId', referencedColumnName: 'id' }])
   User: Users;
+
+  @OneToMany(() => BlogPostsLikeDislike, (likeDislike) => likeDislike.BlogPost)
+  LikeDisLike: BlogPostsLikeDislike;
 
   @CreateDateColumn()
   createdAt: Date;
