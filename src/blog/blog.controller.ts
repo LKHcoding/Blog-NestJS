@@ -54,7 +54,7 @@ export class BlogController {
   @Post('image')
   postImages(@UploadedFile() file: Express.Multer.File) {
     //이미지 업로드 후 경로만 반환한다.
-    return file.path;
+    return file.path.replaceAll('\\', '/');
   }
 
   // 글쓰기

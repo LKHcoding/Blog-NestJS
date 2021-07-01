@@ -1,13 +1,13 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
     "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "esModuleInterop": true, // import * as React from 'react' -> import React from 'react'로 가능하게 해주는 설정
     "allowSyntheticDefaultImports": true,
-    "target": "es2017",
+    "target": "esnext",
+    "module": "commonjs",
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
