@@ -21,6 +21,7 @@ import { UpdateBlogDto } from './dto/update-blog.dto';
 import fs from 'fs';
 import multer from 'multer';
 import path from 'path';
+import { ActionType } from 'src/entities/blog-posts-like';
 
 try {
   fs.readdirSync('uploads');
@@ -84,13 +85,23 @@ export class BlogController {
     return await this.blogService.findPostInfo(postId);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateBlogDto: UpdateBlogDto) {
-    return this.blogService.update(+id, updateBlogDto);
+  @Auth(UserRole.User)
+  @Post('post-like/:postId/:actionType')
+  async handlePostLike(
+    @Param('postId') postId: string,
+    @Param('actionType') actionType: ActionType,
+    @User() user: UserDto,
+  ) {
+    return await this.blogService.updatePostLikeInfo(postId, actionType, user);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.blogService.remove(+id);
-  }
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() updateBlogDto: UpdateBlogDto) {
+  //   return this.blogService.update(+id, updateBlogDto);
+  // }
+
+  // @Delete(':id')
+  // remove(@Param('id') id: string) {
+  //   return this.blogService.remove(+id);
+  // }
 }

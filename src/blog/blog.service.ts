@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserDto } from 'src/common/dto/user.dto';
 import { BlogPosts } from 'src/entities/blog-posts';
+import { ActionType, BlogPostsLike } from 'src/entities/blog-posts-like';
 import {
   BlogPostsTags,
   DeveloperPositionType,
@@ -15,6 +16,8 @@ import { UpdateBlogDto } from './dto/update-blog.dto';
 @Injectable()
 export class BlogService {
   constructor(
+    @InjectRepository(BlogPostsLike)
+    private blogPostsLikeRepository: Repository<BlogPostsLike>,
     @InjectRepository(BlogPosts)
     private blogPostsRepository: Repository<BlogPosts>,
     @InjectRepository(BlogPostsTags)
@@ -110,13 +113,43 @@ export class BlogService {
     //   .getMany();
   }
 
+  //유저별 특정 게시물 정보
   async findPostInfo(postId: string) {
     return await this.blogPostsRepository
       .createQueryBuilder('post')
       .leftJoin('post.Tags', 'tags')
+      .leftJoin('post.LikeDisLike', 'likes')
       .where('post.id = :postId', { postId })
       .addSelect('tags.tagName')
+      .addSelect('likes.UserId')
+      .addSelect('likes.actionType')
       .getOne();
+  }
+
+  async updatePostLikeInfo(
+    postId: string,
+    actionType: ActionType,
+    user: UserDto,
+  ) {
+    const isActionAlready = await this.blogPostsLikeRepository.findOne({
+      PostId: +postId,
+      UserId: user.id,
+      actionType,
+    });
+
+    console.log(isActionAlready);
+
+    if (isActionAlready) {
+      return await this.blogPostsLikeRepository.delete({
+        id: isActionAlready.id,
+      });
+    }
+
+    const likeDislike = new BlogPostsLike();
+    likeDislike.actionType = actionType;
+    likeDislike.PostId = +postId;
+    likeDislike.UserId = user.id;
+    return await this.blogPostsLikeRepository.save(likeDislike);
   }
 
   update(id: number, updateBlogDto: UpdateBlogDto) {

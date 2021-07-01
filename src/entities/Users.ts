@@ -8,7 +8,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { BlogPosts } from './blog-posts';
-import { BlogPostsLikeDislike } from './blog-posts-likeDislike';
+import { BlogPostsLike } from './blog-posts-like';
 
 export enum UserRole {
   User = 'user',
@@ -91,6 +91,6 @@ export class Users {
   @OneToMany(() => BlogPosts, (blogposts) => blogposts.User)
   Posts: BlogPosts[];
 
-  @OneToMany(() => BlogPostsLikeDislike, (likeDislike) => likeDislike.User)
-  LikeDisLike: BlogPostsLikeDislike[];
+  @OneToMany(() => BlogPostsLike, (likeDislike) => likeDislike.User)
+  LikeDisLike: BlogPostsLike[];
 }

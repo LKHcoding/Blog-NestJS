@@ -16,12 +16,12 @@ import { Users } from './Users';
 // 필요한  enum type같은건 각 entity별로 안에서 불러오자.
 // 밖에서 땡겨 썼다가 enum에 쿼리 안들어가서 헤맸음.
 export enum ActionType {
-  Like = 'like',
+  Like = 'Like',
   DisLike = 'DisLike',
 }
 
-@Entity({ schema: 'nesttest', name: 'blog-posts-likeDislike' })
-export class BlogPostsLikeDislike {
+@Entity({ schema: 'nesttest', name: 'blog-posts-like' })
+export class BlogPostsLike {
   @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
   id: number;
 

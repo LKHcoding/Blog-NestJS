@@ -3,7 +3,7 @@ import { Users } from './src/entities/Users';
 import dotenv from 'dotenv';
 import { BlogPosts } from 'src/entities/blog-posts';
 import { BlogPostsTags } from 'src/entities/blog-posts-tags';
-import { BlogPostsLikeDislike } from 'src/entities/blog-posts-likeDislike';
+import { BlogPostsLike } from 'src/entities/blog-posts-like';
 
 dotenv.config();
 const config: TypeOrmModuleOptions = {
@@ -13,7 +13,7 @@ const config: TypeOrmModuleOptions = {
   username: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
-  entities: [Users, BlogPosts, BlogPostsTags, BlogPostsLikeDislike],
+  entities: [Users, BlogPosts, BlogPostsTags, BlogPostsLike],
   // migrations: [__dirname + '/src/migrations/*.ts'],
   // cli: { migrationsDir: 'src/migrations' },
   // entity 자동으로 불러오는 설정
