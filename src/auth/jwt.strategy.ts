@@ -5,7 +5,12 @@ import { UsersService } from 'src/users/users.service';
 import { Injectable } from '@nestjs/common';
 import { UserDto } from 'src/common/dto/user.dto';
 
-dotenv.config();
+dotenv.config({
+  path:
+    process.env.NODE_ENV === 'production'
+      ? '.env.production'
+      : '.env.development',
+});
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {

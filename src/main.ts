@@ -9,10 +9,16 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import path from 'path';
 
 declare const module: any;
-dotenv.config();
+dotenv.config({
+  path:
+    process.env.NODE_ENV === 'production'
+      ? '.env.production'
+      : '.env.development',
+});
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  app.setGlobalPrefix('v1');
   const port = process.env.PORT || 3000;
   app.use(cookieParser());
 
@@ -68,7 +74,11 @@ async function bootstrap() {
     //   credentials: true,
     // },
     {
-      origin: ['http://localhost:3030', 'http://localhost:3031'],
+      origin: [
+        'http://localhost:3030',
+        'http://localhost:3031',
+        '211.228.198.23',
+      ],
       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
       preflightContinue: false,
       optionsSuccessStatus: 204,

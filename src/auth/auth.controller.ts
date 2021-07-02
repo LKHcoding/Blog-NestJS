@@ -80,7 +80,7 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
     @Body() body: AuthLoginRequestDto,
   ) {
-    console.log('this is body : ', body);
+    // console.log('this is body : ', body);
     const { token, options } = await this.authService.login(req.user);
     // 반환된 Token 값을 쿠키에 저장합니다.
     // 저장하기 위하여 res가 필요합니다.
@@ -166,7 +166,7 @@ export class AuthController {
   @UseGuards(NotLoggedInGuard)
   @Post('github-signup')
   async getGithubSignUp(@Body() githubSignUpDto: GithubSignUpDto) {
-    console.log(githubSignUpDto);
+    // console.log(githubSignUpDto);
     //회원가입 시켜야 할지 말지 처리하는곳
     const githubUserResult = await this.userService.githubSignUpUser(
       githubSignUpDto,

@@ -12,7 +12,12 @@ import dotenv from 'dotenv';
 import { LocalSignUpRequestDto } from './dto/local-sign-up.request.dto';
 import { GithubSignUpDto } from 'src/common/dto/github-signup.dto';
 
-dotenv.config();
+dotenv.config({
+  path:
+    process.env.NODE_ENV === 'production'
+      ? '.env.production'
+      : '.env.development',
+});
 
 @Injectable()
 export class UsersService {

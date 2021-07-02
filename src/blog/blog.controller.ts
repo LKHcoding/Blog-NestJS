@@ -31,7 +31,7 @@ try {
 }
 
 @ApiTags('BLOG')
-@Controller('api/blog')
+@Controller('blog')
 export class BlogController {
   constructor(private readonly blogService: BlogService) {}
 
@@ -54,7 +54,8 @@ export class BlogController {
   @Post('image')
   postImages(@UploadedFile() file: Express.Multer.File) {
     //이미지 업로드 후 경로만 반환한다.
-    return file.path.replaceAll('\\', '/');
+    // return file.path.replaceAll('\\', '/');
+    return file.path.replace(/\\/g, '/');
   }
 
   // 글쓰기

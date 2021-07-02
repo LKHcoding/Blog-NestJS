@@ -30,7 +30,7 @@ import { LocalSignUpRequestDto } from './dto/local-sign-up.request.dto';
 import { UsersService } from './users.service';
 
 @ApiTags('USER')
-@Controller('api/users')
+@Controller('users')
 export class UsersController {
   // 컨트롤러에서도 req, res같은걸 최대한 안쓰는게 좋다.
   // nest.js를 쓰더라도 express가 아닌 fastify 같은걸로 바꾸게 될경우,
@@ -70,7 +70,7 @@ export class UsersController {
   @Get('/:loginID')
   async getOneUser(@Query() query, @Param() param) {
     // const user = await this.usersRepository.findOne({ where: { email } });
-    console.log('this is getOneUser', param.loginID);
+    // console.log('this is getOneUser', param.loginID);
     // const { password, ...userdata } = await this.userService.findById(param.id);
     const { password, ...userdata } = await this.userService.findByLoginID(
       param.loginID,

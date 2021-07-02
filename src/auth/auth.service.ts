@@ -10,7 +10,12 @@ import { UserDto } from 'src/common/dto/user.dto';
 import { IsNumber, IsString } from 'class-validator';
 import { GithubUserInfoDTO } from 'src/common/dto/github-user-info.dto';
 
-dotenv.config();
+dotenv.config({
+  path:
+    process.env.NODE_ENV === 'production'
+      ? '.env.production'
+      : '.env.development',
+});
 
 @Injectable()
 export class AuthService {
@@ -36,13 +41,13 @@ export class AuthService {
     // const { password, ...payload } = await this.usersService.findByLoginID(
     //   user.loginID,
     // );
-    console.log('this is login user : ', user);
+    // console.log('this is login user : ', user);
 
     // 토큰을 만들어서 프론트단에서 쿠키에 저장한다.
     const token = this.jwtService.sign(user);
 
     const options: CookieOptions = {
-      domain: 'localhost', // 하위 도메인을 제외한 도메인이 일치하는 경우에만 쿠키 설정. defalt: loaded
+      domain: process.env.DOMAIN, // 하위 도메인을 제외한 도메인이 일치하는 경우에만 쿠키 설정. defalt: loaded
       path: '/', // 경로. 주어진 경로의 하위 디렉토리에 있는 경우에만 쿠키 설정. defalt: '/' 는 전체.
       httpOnly: true, // http에서만 쿠키활용 가능. defalt: true
       maxAge: Number(process.env.COOKIE_MAX_AGE) * 24 * 60 * 1000,

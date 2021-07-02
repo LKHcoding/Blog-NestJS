@@ -5,7 +5,13 @@ import { BlogPosts } from 'src/entities/blog-posts';
 import { BlogPostsTags } from 'src/entities/blog-posts-tags';
 import { BlogPostsLike } from 'src/entities/blog-posts-like';
 
-dotenv.config();
+dotenv.config({
+  path:
+    process.env.NODE_ENV === 'production'
+      ? '.env.production'
+      : '.env.development',
+});
+
 const config: TypeOrmModuleOptions = {
   type: 'mariadb',
   host: 'localhost',

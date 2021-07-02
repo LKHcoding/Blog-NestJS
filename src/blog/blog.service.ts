@@ -137,7 +137,7 @@ export class BlogService {
       actionType,
     });
 
-    console.log(isActionAlready);
+    // console.log(isActionAlready);
 
     if (isActionAlready) {
       return await this.blogPostsLikeRepository.delete({
