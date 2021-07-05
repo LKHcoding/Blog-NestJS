@@ -2,7 +2,7 @@ import { IsArray, IsString, MaxLength } from 'class-validator';
 
 export class CreateBlogPostDto {
   @IsString()
-  @MaxLength(30)
+  @MaxLength(100)
   title: string;
 
   @IsArray()

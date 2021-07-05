@@ -22,7 +22,7 @@ export class BlogPosts {
   @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
   id: number;
 
-  @Column('varchar', { name: 'title', length: 50 })
+  @Column('varchar', { name: 'title', length: 100 })
   title: string;
 
   @ManyToMany(() => BlogPostsTags, (blogPostsTags) => blogPostsTags.BlogPosts)
