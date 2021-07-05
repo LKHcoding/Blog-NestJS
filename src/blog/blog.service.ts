@@ -152,6 +152,23 @@ export class BlogService {
     return await this.blogPostsLikeRepository.save(likeDislike);
   }
 
+  async findAllPostInfo() {
+    return await this.blogPostsRepository
+      .createQueryBuilder('posts')
+      .leftJoin('posts.Tags', 'tags')
+      .leftJoin('posts.LikeDisLike', 'likes')
+      .leftJoin('posts.User', 'user')
+      .orderBy('posts.updatedAt', 'DESC')
+      .addSelect('tags.tagName')
+      .addSelect('likes.actionType')
+      .addSelect('likes.UserId')
+      .addSelect('user.loginID')
+      .addSelect('user.avatarUrl')
+      .addSelect('user.positionType')
+      .addSelect('user.deletedAt')
+      .getMany();
+  }
+
   update(id: number, updateBlogDto: UpdateBlogDto) {
     return `This action updates a #${id} blog`;
   }

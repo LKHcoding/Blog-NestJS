@@ -86,6 +86,7 @@ export class BlogController {
     return await this.blogService.findPostInfo(postId);
   }
 
+  // 특정 게시물 좋아요, 싫어요 추가 삭제
   @Auth(UserRole.User)
   @Post('post-like/:postId/:actionType')
   async handlePostLike(
@@ -94,6 +95,12 @@ export class BlogController {
     @User() user: UserDto,
   ) {
     return await this.blogService.updatePostLikeInfo(postId, actionType, user);
+  }
+
+  // 전체 게시물 정보
+  @Get('all-posts-info')
+  async getAllPostInfo() {
+    return await this.blogService.findAllPostInfo();
   }
 
   // @Patch(':id')
