@@ -159,6 +159,7 @@ export class AuthController {
     return {
       status: 200,
       message: '깃허브 유저 정보를 조회하였습니다.',
+      githubUserData: user,
       token,
     };
   }
@@ -196,6 +197,7 @@ export class AuthController {
     return {
       status: 200,
       message: '깃허브 회원가입 성공 및 유저 정보를 조회하였습니다.',
+      user: convertedUser,
       token,
     };
   }
