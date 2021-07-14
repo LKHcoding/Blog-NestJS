@@ -101,8 +101,11 @@ export class BlogService {
       .createQueryBuilder('posts')
       .leftJoin('posts.Tags', 'tags')
       .leftJoin('posts.User', 'user')
+      .leftJoin('posts.LikeDisLike', 'likes')
       .where('user.loginID = :loginID', { loginID: userID })
       .addSelect('tags.tagName')
+      .addSelect('likes.UserId')
+      .addSelect('likes.actionType')
       .getMany();
 
     //하나의 태그를 어떤 게시물들에서 사용했는지 게시물 다 가져오기
