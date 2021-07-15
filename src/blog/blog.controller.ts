@@ -103,6 +103,15 @@ export class BlogController {
     return await this.blogService.findAllPostInfo();
   }
 
+  // post list by tag by user
+  @Get('posts-info-byTag/:userID/:tag')
+  async getPostInfoByTagByUser(
+    @Param('userID') userID: string,
+    @Param('tag') tag: string,
+  ) {
+    return await this.blogService.findPostInfoByTagByUser(userID, tag);
+  }
+
   // @Patch(':id')
   // update(@Param('id') id: string, @Body() updateBlogDto: UpdateBlogDto) {
   //   return this.blogService.update(+id, updateBlogDto);

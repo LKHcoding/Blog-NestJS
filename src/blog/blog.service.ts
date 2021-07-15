@@ -172,6 +172,18 @@ export class BlogService {
       .getMany();
   }
 
+  async findPostInfoByTagByUser(userID: string, tags: string) {
+    //하나의 태그를 어떤 게시물들에서 사용했는지 게시물 다 가져오기
+    return await this.blogPostsTagsRepository
+      .createQueryBuilder('usedTags')
+      .leftJoinAndSelect('usedTags.BlogPosts', 'posts')
+      .leftJoinAndSelect('posts.User', 'user')
+      .where('user.loginID = :loginID', { loginID: userID })
+      .where('usedTags.tagName IN (:...tags)', { tags })
+      // .where('usedTags.tagName IN (:...tags)', { tags: ['tag', 'tag2'] })
+      .getMany();
+  }
+
   update(id: number, updateBlogDto: UpdateBlogDto) {
     return `This action updates a #${id} blog`;
   }
