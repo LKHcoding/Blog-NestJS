@@ -75,9 +75,16 @@ export class BlogController {
   }
 
   // 유저별 전체 게시물 정보
-  @Get('posts-info/:userID')
-  async getPostsInfoList(@Param('userID') userID: string) {
-    return await this.blogService.findPostsInfoList(userID);
+  @Get('posts-info/:userID/:tag')
+  async getPostsInfoList(
+    @Param('userID') userID: string,
+    @Param('tag') tag: string,
+  ) {
+    if (tag === 'all') {
+      return await this.blogService.findPostsInfoList(userID);
+    } else {
+      return await this.blogService.findPostInfoByTagByUser(userID, tag);
+    }
   }
 
   // 유저별 특정 게시물 정보

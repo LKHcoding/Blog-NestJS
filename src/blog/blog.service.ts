@@ -95,8 +95,8 @@ export class BlogService {
     return { tagInfoResult, allPostCount };
   }
 
-  //유저별 전체 게시물 정보 리스트
   async findPostsInfoList(userID: string) {
+    //유저별 전체 게시물 정보 리스트
     return await this.blogPostsRepository
       .createQueryBuilder('posts')
       .leftJoin('posts.Tags', 'tags')
@@ -107,13 +107,35 @@ export class BlogService {
       .addSelect('likes.UserId')
       .addSelect('likes.actionType')
       .getMany();
+  }
 
-    //하나의 태그를 어떤 게시물들에서 사용했는지 게시물 다 가져오기
-    // return await this.blogPostsTagsRepository
-    //   .createQueryBuilder('blog-posts-tags')
-    //   .where('blog-posts-tags.tagName IN (:...tags)', { tags: [tag, 'tag2'] })
-    //   .leftJoinAndSelect('blog-posts-tags.BlogPosts', 'blog-posts')
-    //   .getMany();
+  async findPostInfoByTagByUser(userID: string, tag: string) {
+    //하나의 태그를 어떤 게시물들에서 사용했는지 게시물 다 가져오기 (각 유저별로)
+    return (
+      (
+        await this.blogPostsRepository
+          .createQueryBuilder('posts')
+          .leftJoin('posts.User', 'user')
+          .leftJoin('posts.Tags', 'tags')
+          .leftJoin('posts.LikeDisLike', 'likes')
+          .where('user.loginID = :loginID', { loginID: userID })
+          // .andWhere('tags.tagName @> ARRAY[:tag]', {
+          //   tag,
+          // })
+          .addSelect('tags.tagName')
+          // .andHaving('tags.tagName = :tag', { tag })
+          .addSelect('likes.UserId')
+          .addSelect('likes.actionType')
+          .getMany()
+      ).filter((item) => {
+        for (let index = 0; index < item.Tags.length; index++) {
+          if (item.Tags[index].tagName === tag) {
+            return true;
+          }
+        }
+        return false;
+      })
+    );
   }
 
   //유저별 특정 게시물 정보
@@ -169,18 +191,6 @@ export class BlogService {
       .addSelect('user.avatarUrl')
       .addSelect('user.positionType')
       .addSelect('user.deletedAt')
-      .getMany();
-  }
-
-  async findPostInfoByTagByUser(userID: string, tags: string) {
-    //하나의 태그를 어떤 게시물들에서 사용했는지 게시물 다 가져오기
-    return await this.blogPostsTagsRepository
-      .createQueryBuilder('usedTags')
-      .leftJoinAndSelect('usedTags.BlogPosts', 'posts')
-      .leftJoinAndSelect('posts.User', 'user')
-      .where('user.loginID = :loginID', { loginID: userID })
-      .where('usedTags.tagName IN (:...tags)', { tags })
-      // .where('usedTags.tagName IN (:...tags)', { tags: ['tag', 'tag2'] })
       .getMany();
   }
 
