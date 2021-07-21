@@ -68,10 +68,19 @@ export class BlogController {
     return await this.blogService.createPost(createBlogPostData, user);
   }
 
-  // 유저별 태그 정보
+  // 유저의 포지션별 모든 태그 정보
+  @Get('tags-info')
+  @Auth(UserRole.User)
+  async getAllTagsInfoListByPosition(@User() user: UserDto) {
+    return await this.blogService.findAllTagsInfoListByPosition(
+      user.positionType,
+    );
+  }
+
+  // 유저별 태그의 게시글 수 정보
   @Get('tags-info/:userID')
-  async getTagsInfoList(@Param('userID') userID: string) {
-    return await this.blogService.findTagsInfoList(userID);
+  async getTagsInfoListByUser(@Param('userID') userID: string) {
+    return await this.blogService.findTagsInfoListByUser(userID);
   }
 
   // 유저별 전체 게시물 정보

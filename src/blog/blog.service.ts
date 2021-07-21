@@ -73,7 +73,7 @@ export class BlogService {
   }
 
   // 태그별 게시물 수 구하기
-  async findTagsInfoList(userID: string) {
+  async findTagsInfoListByUser(userID: string) {
     // 태그별 글 개수를 구하고 싶지만 typeorm으로 구하기 쉽지않다.
     // 데이터를 넘겨받은 다음 BlogPosts 의 length로 개수를 구할 수 있다.
     const tagInfoResult = await this.blogPostsTagsRepository
@@ -93,6 +93,17 @@ export class BlogService {
       .getCount();
 
     return { tagInfoResult, allPostCount };
+  }
+
+  // 유저의 포지션별 모든 태그 정보 찾기
+  async findAllTagsInfoListByPosition(position: string) {
+    const tagInfoResult = await this.blogPostsTagsRepository
+      .createQueryBuilder('tagList')
+      .where('tagList.positionType = :position', { position })
+      .select('tagList.tagName')
+      .getMany();
+
+    return { tagInfoResult };
   }
 
   async findPostsInfoList(userID: string) {
