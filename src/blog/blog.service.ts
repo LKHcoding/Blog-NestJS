@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserDto } from 'src/common/dto/user.dto';
 import { BlogPosts } from 'src/entities/blog-posts';
@@ -11,6 +11,7 @@ import { Users } from 'src/entities/Users';
 import { UsersService } from 'src/users/users.service';
 import { Repository } from 'typeorm';
 import { CreateBlogPostDto } from './dto/create-blog-post.dto';
+import { UpdateBlogPostDto } from './dto/update-blog-post.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
 
 @Injectable()
@@ -60,6 +61,60 @@ export class BlogService {
     }
 
     const Post = new BlogPosts();
+    Post.Tags = savedTags !== null ? [...savedTags, ...existTags] : existTags;
+    Post.title = title;
+    Post.content = content;
+    Post.thumbnail = thumbnail;
+    // Post.User = user;
+    Post.UserId = user.id;
+
+    const result = await this.blogPostsRepository.save(Post);
+
+    return result;
+  }
+
+  //글수정
+  async updatePost(updateBlogPostData: UpdateBlogPostDto, user: UserDto) {
+    const { id, title, tags, content, thumbnail } = updateBlogPostData;
+
+    // 각 태그를 BlogPostsTags 객체 형태로 바꿔주기
+    const newTagListObj = tags.map((tagItem) => {
+      let newItem = new BlogPostsTags();
+      newItem.tagName = tagItem;
+      newItem.positionType = user.positionType;
+      return newItem;
+    });
+
+    // 이미 존재 하는 태그들 조회해보기
+    const existTags = await this.blogPostsTagsRepository.find({
+      where: newTagListObj,
+    });
+
+    // 이미 디비에 존재하는 태그는 저장하면 안되니 빼주는 로직
+    for (let idx = newTagListObj.length - 1; 0 <= idx; idx--) {
+      existTags.map((item) => {
+        if (newTagListObj[idx]?.tagName === item?.tagName) {
+          if (newTagListObj[idx].positionType === item.positionType) {
+            newTagListObj.splice(idx, 1);
+          }
+        }
+      });
+    }
+
+    // 존재하지 않는 태그는 Save 해주기
+    let savedTags = null;
+    if (newTagListObj.length !== 0) {
+      savedTags = await this.blogPostsTagsRepository.save(newTagListObj);
+    }
+
+    // const Post = new BlogPosts();
+    const Post = await this.blogPostsRepository.findOne({ where: { id } });
+
+    // Post.id = id;
+    if (user.id !== Post.UserId) {
+      throw new HttpException('글 작성자가 아닙니다.', HttpStatus.UNAUTHORIZED);
+    }
+
     Post.Tags = savedTags !== null ? [...savedTags, ...existTags] : existTags;
     Post.title = title;
     Post.content = content;

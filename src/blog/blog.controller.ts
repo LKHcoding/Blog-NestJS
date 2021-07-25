@@ -22,6 +22,7 @@ import fs from 'fs';
 import multer from 'multer';
 import path from 'path';
 import { ActionType } from 'src/entities/blog-posts-like';
+import { UpdateBlogPostDto } from './dto/update-blog-post.dto';
 
 try {
   fs.readdirSync('uploads');
@@ -66,6 +67,16 @@ export class BlogController {
     @User() user: UserDto,
   ) {
     return await this.blogService.createPost(createBlogPostData, user);
+  }
+
+  // 글수정
+  @Auth(UserRole.User)
+  @Post('update-post')
+  async updatePost(
+    @Body() updateBlogPostData: UpdateBlogPostDto,
+    @User() user: UserDto,
+  ) {
+    return await this.blogService.updatePost(updateBlogPostData, user);
   }
 
   // 유저의 포지션별 모든 태그 정보
