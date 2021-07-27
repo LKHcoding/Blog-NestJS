@@ -13,6 +13,7 @@ import { Repository } from 'typeorm';
 import { CreateBlogPostDto } from './dto/create-blog-post.dto';
 import { UpdateBlogPostDto } from './dto/update-blog-post.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
+import fs from 'fs';
 
 @Injectable()
 export class BlogService {
@@ -126,6 +127,31 @@ export class BlogService {
     const result = await this.blogPostsRepository.save(Post);
 
     return result;
+  }
+
+  //글 삭제
+  async deletePost(postId: number, user: UserDto) {
+    const postDataResult = await this.blogPostsRepository.findOne({
+      id: postId,
+    });
+
+    if (postDataResult.UserId !== user.id) {
+      throw new HttpException('글 작성자가 아닙니다.', HttpStatus.UNAUTHORIZED);
+    }
+    if (!postDataResult) {
+      throw new HttpException(
+        '존재하지 않는 게시물 입니다.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    // 글 수정시 썸네일을 새로 올리면 기존의 이미지는 지워준다.
+    fs.unlink(postDataResult.thumbnail, (err) => {
+      console.log('게시글 삭제 중 썸네일 파일 삭제 실패 : ', err);
+      // throw new HttpException('파일 삭제 실패', HttpStatus.BAD_REQUEST);
+    });
+
+    return await this.blogPostsRepository.delete({ id: postDataResult.id });
   }
 
   // 태그별 게시물 수 구하기
@@ -259,13 +285,5 @@ export class BlogService {
       .addSelect('user.positionType')
       .addSelect('user.deletedAt')
       .getMany();
-  }
-
-  update(id: number, updateBlogDto: UpdateBlogDto) {
-    return `This action updates a #${id} blog`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} blog`;
   }
 }

@@ -71,7 +71,7 @@ export class BlogController {
     return await this.blogService.createPost(createBlogPostData, user);
   }
 
-  // 글수정
+  // 글 수정
   @Auth(UserRole.User)
   @Post('update-post')
   async updatePost(
@@ -89,6 +89,13 @@ export class BlogController {
     }
 
     return await this.blogService.updatePost(updateBlogPostData, user);
+  }
+
+  // 글 삭제
+  @Auth(UserRole.User)
+  @Delete('delete-post/:postId')
+  async deletePost(@Param('postId') postId: string, @User() user: UserDto) {
+    return await this.blogService.deletePost(+postId, user);
   }
 
   // 유저의 포지션별 모든 태그 정보
