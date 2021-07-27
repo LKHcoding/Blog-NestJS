@@ -8,6 +8,8 @@ import {
   Delete,
   UseInterceptors,
   UploadedFile,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags } from '@nestjs/swagger';
@@ -76,6 +78,16 @@ export class BlogController {
     @Body() updateBlogPostData: UpdateBlogPostDto,
     @User() user: UserDto,
   ) {
+    if (updateBlogPostData.prevThumbnail !== '') {
+      // console.log(updateBlogPostData.prevThumbnail);
+
+      // 글 수정시 썸네일을 새로 올리면 기존의 이미지는 지워준다.
+      fs.unlink(updateBlogPostData.prevThumbnail, (err) => {
+        console.log('파일 삭제 실패 : ', err);
+        // throw new HttpException('파일 삭제 실패', HttpStatus.BAD_REQUEST);
+      });
+    }
+
     return await this.blogService.updatePost(updateBlogPostData, user);
   }
 

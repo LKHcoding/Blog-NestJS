@@ -70,6 +70,7 @@ export class BlogService {
 
     const result = await this.blogPostsRepository.save(Post);
 
+    // console.log(result);
     return result;
   }
 

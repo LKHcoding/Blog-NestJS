@@ -35,7 +35,9 @@ export class BlogPostsLike {
   @Column('int', { name: 'PostId', nullable: false })
   PostId: number;
 
-  @ManyToOne(() => BlogPosts, (blogPosts) => blogPosts.id)
+  @ManyToOne(() => BlogPosts, (blogPosts) => blogPosts.id, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn([{ name: 'PostId', referencedColumnName: 'id' }])
   BlogPost: BlogPosts;
 

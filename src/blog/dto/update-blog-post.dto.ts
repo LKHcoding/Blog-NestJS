@@ -17,4 +17,7 @@ export class UpdateBlogPostDto {
 
   @IsString()
   thumbnail: string;
+
+  @IsString()
+  prevThumbnail: string;
 }
