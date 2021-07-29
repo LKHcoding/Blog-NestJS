@@ -112,9 +112,14 @@ export class BlogService {
     // const Post = new BlogPosts();
     const Post = await this.blogPostsRepository.findOne({ where: { id } });
 
-    // Post.id = id;
-    if (user.id !== Post.UserId) {
-      throw new HttpException('글 작성자가 아닙니다.', HttpStatus.UNAUTHORIZED);
+    // 관리자면 패스
+    if (user.role !== 'admin') {
+      if (user.id !== Post.UserId) {
+        throw new HttpException(
+          '글 작성자가 아닙니다.',
+          HttpStatus.UNAUTHORIZED,
+        );
+      }
     }
 
     Post.Tags = savedTags !== null ? [...savedTags, ...existTags] : existTags;
@@ -135,9 +140,16 @@ export class BlogService {
       id: postId,
     });
 
-    if (postDataResult.UserId !== user.id) {
-      throw new HttpException('글 작성자가 아닙니다.', HttpStatus.UNAUTHORIZED);
+    // 관리자면 패스
+    if (user.role !== 'admin') {
+      if (postDataResult.UserId !== user.id) {
+        throw new HttpException(
+          '글 작성자가 아닙니다.',
+          HttpStatus.UNAUTHORIZED,
+        );
+      }
     }
+
     if (!postDataResult) {
       throw new HttpException(
         '존재하지 않는 게시물 입니다.',
