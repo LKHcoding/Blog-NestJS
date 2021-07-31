@@ -35,6 +35,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   async validate(payload: UserDto) {
     // 이런 방식으로 유저정보 토큰에 같이 보낼수 있음.
     // const { password, ...user } = await this.usersService.findById(payload.sub);
+    console.log(
+      `@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@[Login User : ${payload.loginID}]@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@`,
+    );
 
     return payload;
 

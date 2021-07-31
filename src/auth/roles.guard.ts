@@ -41,6 +41,7 @@ export class RolesGuard implements CanActivate {
         HttpStatus.UNAUTHORIZED,
       );
     }
+
     if (user.role === UserRole.Admin) {
       //관리자 권한을 가진 계정은 @Auth(여기에 안써줘도) 모두 통과시킴
       return true;
