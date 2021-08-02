@@ -74,11 +74,7 @@ async function bootstrap() {
     //   credentials: true,
     // },
     {
-      origin: [
-        'http://localhost:3030',
-        'http://localhost:3031',
-        '211.228.198.23',
-      ],
+      origin: ['http://localhost:3030', 'http://localhost:3031'],
       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
       preflightContinue: false,
       optionsSuccessStatus: 204,
