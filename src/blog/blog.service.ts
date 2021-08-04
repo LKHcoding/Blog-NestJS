@@ -1,19 +1,15 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import fs from 'fs';
+import { AlgoliaService } from 'nestjs-algolia';
 import { UserDto } from 'src/common/dto/user.dto';
 import { BlogPosts } from 'src/entities/blog-posts';
 import { ActionType, BlogPostsLike } from 'src/entities/blog-posts-like';
-import {
-  BlogPostsTags,
-  DeveloperPositionType,
-} from 'src/entities/blog-posts-tags';
-import { Users } from 'src/entities/Users';
+import { BlogPostsTags } from 'src/entities/blog-posts-tags';
 import { UsersService } from 'src/users/users.service';
 import { Repository } from 'typeorm';
 import { CreateBlogPostDto } from './dto/create-blog-post.dto';
 import { UpdateBlogPostDto } from './dto/update-blog-post.dto';
-import { UpdateBlogDto } from './dto/update-blog.dto';
-import fs from 'fs';
 
 @Injectable()
 export class BlogService {
@@ -25,6 +21,8 @@ export class BlogService {
     @InjectRepository(BlogPostsTags)
     private blogPostsTagsRepository: Repository<BlogPostsTags>,
     private usersService: UsersService,
+    // for Algolia
+    private readonly algoliaService: AlgoliaService,
   ) {}
 
   //글쓰기
@@ -71,7 +69,19 @@ export class BlogService {
 
     const result = await this.blogPostsRepository.save(Post);
 
-    // console.log(result);
+    // algolia
+    const index = this.algoliaService.initIndex('develogger-post');
+    const algoliaData = await this.algoliaFindPost(result.id);
+    // 게시글 내용에 태그를 지운다.
+    algoliaData.content = algoliaData.content.replace(/(<([^>]+)>)/gi, '');
+
+    // algolia에 데이터 삽입
+    try {
+      await index.addObject(algoliaData);
+    } catch (error) {
+      console.log('Algolia insert data error : ', error);
+    }
+
     return result;
   }
 
@@ -131,6 +141,31 @@ export class BlogService {
 
     const result = await this.blogPostsRepository.save(Post);
 
+    // algolia update post data
+    const index = this.algoliaService.initIndex('develogger-post');
+    const algoliaData = await this.algoliaFindPost(result.id);
+    algoliaData.content = algoliaData.content.replace(/(<([^>]+)>)/gi, '');
+
+    // algolia 데이터 찾기
+    const findResultObjectId = await index
+      .search(algoliaData.User.loginID)
+      .then(({ hits }) => {
+        return hits.filter((item) => item.id === result.id);
+      });
+
+    try {
+      await index
+        .saveObject({
+          ...algoliaData,
+          objectID: findResultObjectId[0].objectID,
+        })
+        .then(() => {
+          console.log('글 수정하고 algolia 데이터 업데이트 성공');
+        });
+    } catch (error) {
+      console.log('Algolia update data error : ', error);
+    }
+
     return result;
   }
 
@@ -157,13 +192,42 @@ export class BlogService {
       );
     }
 
-    // 글 수정시 썸네일을 새로 올리면 기존의 이미지는 지워준다.
+    // 글 수정시는 썸네일을 새로 올리면 기존의 이미지는 지워준다.
     fs.unlink(postDataResult.thumbnail, (err) => {
       console.log('게시글 삭제 중 썸네일 파일 삭제 실패 : ', err);
       // throw new HttpException('파일 삭제 실패', HttpStatus.BAD_REQUEST);
     });
 
-    return await this.blogPostsRepository.delete({ id: postDataResult.id });
+    // 실제 글 삭제 하기 전 algolia에서도 지우기 위해 미리 데이터를 가져온다.
+    const algoliaData = await this.algoliaFindPost(postId);
+
+    const deletedPostResult = await this.blogPostsRepository.delete({
+      id: postDataResult.id,
+    });
+
+    // algolia record 삭제
+    const index = this.algoliaService.initIndex('develogger-post');
+
+    // algolia 데이터 찾기
+    const findResultObjectId = await index
+      .search(algoliaData.User.loginID)
+      .then(({ hits }) => {
+        return hits.filter((item) => item.id === postId);
+      });
+
+    console.log('--------------------------------', findResultObjectId);
+
+    try {
+      await index
+        .deleteObjects([findResultObjectId[0].objectID])
+        .then(({ objectIDs }) => {
+          console.log('글 삭제 후 algolia data 삭제 성공 : ', objectIDs);
+        });
+    } catch (error) {
+      console.log('Algolia delete data error : ', error);
+    }
+
+    return deletedPostResult;
   }
 
   // 태그별 게시물 수 구하기
@@ -282,6 +346,7 @@ export class BlogService {
     return await this.blogPostsLikeRepository.save(likeDislike);
   }
 
+  //전체 게시글 정보
   async findAllPostInfo() {
     return await this.blogPostsRepository
       .createQueryBuilder('posts')
@@ -297,5 +362,23 @@ export class BlogService {
       .addSelect('user.positionType')
       .addSelect('user.deletedAt')
       .getMany();
+  }
+
+  async algoliaFindPost(postId: number) {
+    return await this.blogPostsRepository
+      .createQueryBuilder('posts')
+      .leftJoin('posts.Tags', 'tags')
+      .leftJoin('posts.LikeDisLike', 'likes')
+      .leftJoin('posts.User', 'user')
+      .where('posts.id = :postId', { postId })
+      .orderBy('posts.updatedAt', 'DESC')
+      .addSelect('tags.tagName')
+      .addSelect('likes.actionType')
+      .addSelect('likes.UserId')
+      .addSelect('user.loginID')
+      .addSelect('user.avatarUrl')
+      .addSelect('user.positionType')
+      .addSelect('user.deletedAt')
+      .getOne();
   }
 }
