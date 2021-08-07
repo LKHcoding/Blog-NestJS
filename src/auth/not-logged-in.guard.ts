@@ -14,7 +14,7 @@ export class NotLoggedInGuard implements CanActivate {
   canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
 
-    // console.log(request.cookies.Authentication);
+    // console.log(request.cookies);
 
     if (request.cookies.Authentication) {
       // jwtAuthGuard에서 인증후에 user정보를 request에 넘겨준다.

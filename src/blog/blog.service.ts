@@ -353,7 +353,7 @@ export class BlogService {
       .leftJoin('posts.Tags', 'tags')
       .leftJoin('posts.LikeDisLike', 'likes')
       .leftJoin('posts.User', 'user')
-      .orderBy('posts.updatedAt', 'DESC')
+      .orderBy('posts.createdAt', 'DESC')
       .addSelect('tags.tagName')
       .addSelect('likes.actionType')
       .addSelect('likes.UserId')
