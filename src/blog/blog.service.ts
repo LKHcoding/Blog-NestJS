@@ -137,7 +137,7 @@ export class BlogService {
     Post.content = content;
     Post.thumbnail = thumbnail;
     // Post.User = user;
-    Post.UserId = user.id;
+    // Post.UserId = user.id;
 
     const result = await this.blogPostsRepository.save(Post);
 
