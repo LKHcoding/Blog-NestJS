@@ -50,7 +50,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     }
 
     // custom exception
-    response.status(status).json({
+    return response.status(status).json({
       success: false,
       statusCode: status,
       message: err,

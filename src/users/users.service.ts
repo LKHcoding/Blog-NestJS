@@ -59,7 +59,7 @@ export class UsersService {
     }
     throw new HttpException(
       '해당 Login ID가 존재하지 않습니다',
-      HttpStatus.NOT_FOUND,
+      HttpStatus.UNAUTHORIZED,
     );
   }
 

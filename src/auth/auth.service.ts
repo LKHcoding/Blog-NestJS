@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
@@ -27,13 +27,20 @@ export class AuthService {
   async validateUser(loginID: string, password: string): Promise<any> {
     const user = await this.usersService.findByLoginID(loginID);
 
+    // console.log(user);
+    if (user.loginType === 'github') {
+      throw new HttpException(
+        'Github login으로 가입된 계정입니다. GITHUB LOGIN을 이용해 주세요!',
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+
     //비밀번호 받아와서 암호화된 비밀번호랑 비교해야함.
     if (user && (await bcrypt.compare(password, user.password))) {
       const { password, ...result } = user;
       return result;
     }
-
-    return null;
+    throw new HttpException('비밀번호가 틀렸습니다.', HttpStatus.UNAUTHORIZED);
   }
 
   // jwt base setting
@@ -104,7 +111,10 @@ export class AuthService {
 
     if (!result) {
       // 데이터가 없고 에러발생한경우
-      throw new HttpException('깃허브 인증을 실패했습니다.', 401);
+      throw new HttpException(
+        '깃허브 인증을 실패했습니다.',
+        HttpStatus.UNAUTHORIZED,
+      );
     }
 
     // 요청이 성공한다면, access_token 키값의 토큰을 깃허브에서 넘겨줍니다.

@@ -16,7 +16,8 @@ export class AuthLoginRequestDto {
   })
   @IsAlphanumeric()
   @IsNotEmpty()
-  @MaxLength(10)
+  @MinLength(5)
+  @MaxLength(15)
   public loginID: string;
 
   @ApiProperty({
