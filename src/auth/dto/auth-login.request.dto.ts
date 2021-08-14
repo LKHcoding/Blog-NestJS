@@ -16,8 +16,8 @@ export class AuthLoginRequestDto {
   })
   @IsAlphanumeric()
   @IsNotEmpty()
-  @MinLength(5)
-  @MaxLength(15)
+  @MinLength(5, { message: 'ID는 최소 5자 이상을 입력해주세요.' })
+  @MaxLength(15, { message: 'ID는 최대 15자 이내로 입력해주세요.' })
   public loginID: string;
 
   @ApiProperty({
@@ -26,7 +26,7 @@ export class AuthLoginRequestDto {
     required: true,
   })
   @IsNotEmpty()
-  @MinLength(5)
-  @MaxLength(30)
+  @MinLength(5, { message: '비밀번호는 최소 5자 이상을 입력해주세요.' })
+  @MaxLength(30, { message: '비밀번호는 최대 30자 이내로 입력해주세요.' })
   public password: string;
 }
