@@ -42,6 +42,11 @@ async function bootstrap() {
     .setDescription('Blog 개발을 위한 nestjs api 문서입니다')
     .setVersion('1.0')
     .addCookieAuth('Authentication')
+    .setContact(
+      'Open-Api-Spec-Document',
+      `http://${process.env.DOMAIN}:${process.env.PORT}/api-json`,
+      '',
+    )
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

@@ -12,7 +12,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Auth } from 'src/common/decorators/auth.decorator';
 import { User } from 'src/common/decorators/user.decorator';
 import { UserDto } from 'src/common/dto/user.dto';
@@ -25,6 +25,7 @@ import multer from 'multer';
 import path from 'path';
 import { ActionType } from 'src/entities/blog-posts-like';
 import { UpdateBlogPostDto } from './dto/update-blog-post.dto';
+import { BlogPosts } from '../entities/blog-posts';
 
 try {
   fs.readdirSync('uploads');
@@ -127,8 +128,13 @@ export class BlogController {
   }
 
   // 유저별 특정 게시물 정보
+  @ApiResponse({
+    status: 200,
+    description: '성공',
+    type: BlogPosts,
+  })
   @Get('post-info/:postId')
-  async getOnePostInfo(@Param('postId') postId: string) {
+  async getOnePostInfo(@Param('postId') postId: string): Promise<BlogPosts> {
     return await this.blogService.findPostInfo(postId);
   }
 

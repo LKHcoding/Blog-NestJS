@@ -50,8 +50,16 @@ export class UsersController {
   })
   @Auth(UserRole.Admin)
   @ApiOperation({ summary: '유저 전체 조회' })
+  @ApiResponse({
+    status: 200,
+    description: '성공',
+    type: [UserDto],
+  })
   @Get('/all')
-  async findAll(@Query() query) {
+  async findAll(
+    @Query('page') page: string,
+    @Query('perPage') perPage: string,
+  ) {
     //query 변수에 쿼리스트링으로 넘어온 값들이 들어온다.
     // 이걸 이용해서 select시 페이징 처리하여 리턴 할 수 있다.
     // 아직 하진 않았음.
@@ -62,18 +70,18 @@ export class UsersController {
 
   @ApiOperation({ summary: '특정 유저 조회' })
   @ApiParam({
-    name: 'id',
+    name: 'loginID',
     required: true,
     description: '찾을 사용자 아이디',
   })
   @ApiNotFoundResponse({ description: '해당 유저가 존재하지 않습니다' })
   @Get('/:loginID')
-  async getOneUser(@Query() query, @Param() param) {
+  async getOneUser(@Query() query, @Param('loginID') loginID: string) {
     // const user = await this.usersRepository.findOne({ where: { email } });
     // console.log('this is getOneUser', param.loginID);
     // const { password, ...userdata } = await this.userService.findById(param.id);
     const { password, ...userdata } = await this.userService.findByLoginID(
-      param.loginID,
+      loginID,
     );
     return userdata;
   }
