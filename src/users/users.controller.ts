@@ -56,10 +56,7 @@ export class UsersController {
     type: [UserDto],
   })
   @Get('/all')
-  async findAll(
-    @Query('page') page: string,
-    @Query('perPage') perPage: string,
-  ) {
+  async findAll() {
     //query 변수에 쿼리스트링으로 넘어온 값들이 들어온다.
     // 이걸 이용해서 select시 페이징 처리하여 리턴 할 수 있다.
     // 아직 하진 않았음.
