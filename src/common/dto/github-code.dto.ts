@@ -9,5 +9,5 @@ export class GithubCodeDto {
   })
   @IsNotEmpty()
   @IsString()
-  readonly code: string;
+  code: string;
 }

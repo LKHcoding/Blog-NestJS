@@ -120,6 +120,7 @@ export class AuthController {
   @UseGuards(NotLoggedInGuard)
   @Post('github-info')
   async getGithubInfo(@Body() githubCodeDto: GithubCodeDto) {
+    console.log('-> githubCodeDto', githubCodeDto);
     // 깃허브 유저 정보 가져오는 곳
     const user = await this.authService.getGithubInfo(githubCodeDto);
 

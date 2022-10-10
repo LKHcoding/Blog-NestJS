@@ -1,31 +1,27 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
-  UseInterceptors,
+  Get,
+  Param,
+  Post,
   UploadedFile,
-  HttpException,
-  HttpStatus,
+  UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Auth } from 'src/common/decorators/auth.decorator';
 import { User } from 'src/common/decorators/user.decorator';
 import { UserDto } from 'src/common/dto/user.dto';
 import { UserRole } from 'src/entities/Users';
 import { BlogService } from './blog.service';
 import { CreateBlogPostDto } from './dto/create-blog-post.dto';
-import { UpdateBlogDto } from './dto/update-blog.dto';
 import fs from 'fs';
 import multer from 'multer';
 import path from 'path';
-import { ActionType } from 'src/entities/blog-posts-like';
 import { UpdateBlogPostDto } from './dto/update-blog-post.dto';
 import { BlogPosts } from '../entities/blog-posts';
+import { ActionType } from '../entities/blog-posts-like';
 
 try {
   fs.readdirSync('uploads');
@@ -141,6 +137,11 @@ export class BlogController {
   // 특정 게시물 좋아요, 싫어요 추가 삭제
   @Auth(UserRole.User)
   @Post('post-like/:postId/:actionType')
+  @ApiParam({
+    name: 'actionType',
+    enum: ActionType,
+    enumName: 'ActionType',
+  })
   async handlePostLike(
     @Param('postId') postId: string,
     @Param('actionType') actionType: ActionType,

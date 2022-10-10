@@ -28,19 +28,22 @@ export class BlogService {
   //글쓰기
   async createPost(createBlogPostData: CreateBlogPostDto, user: UserDto) {
     const { title, tags, content, thumbnail } = createBlogPostData;
+    console.log('-> createBlogPostData', createBlogPostData);
 
     // 각 태그를 BlogPostsTags 객체 형태로 바꿔주기
     const newTagListObj = tags.map((tagItem) => {
-      let newItem = new BlogPostsTags();
+      const newItem = {} as BlogPostsTags;
       newItem.tagName = tagItem;
       newItem.positionType = user.positionType;
       return newItem;
     });
+    console.log('-> newTagListObj', newTagListObj);
 
     // 이미 존재 하는 태그들 조회해보기
     const existTags = await this.blogPostsTagsRepository.find({
       where: newTagListObj,
     });
+    console.log('-> existTags', existTags);
 
     // 이미 디비에 존재하는 태그는 저장하면 안되니 빼주는 로직
     for (let idx = newTagListObj.length - 1; 0 <= idx; idx--) {
@@ -91,7 +94,7 @@ export class BlogService {
 
     // 각 태그를 BlogPostsTags 객체 형태로 바꿔주기
     const newTagListObj = tags.map((tagItem) => {
-      let newItem = new BlogPostsTags();
+      const newItem = {} as BlogPostsTags;
       newItem.tagName = tagItem;
       newItem.positionType = user.positionType;
       return newItem;
