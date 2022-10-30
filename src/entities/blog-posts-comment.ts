@@ -29,7 +29,6 @@ export class BlogPostsComment {
   @Column('int', { name: 'PostId', nullable: false })
   PostId: number;
 
-  @ApiProperty()
   @ManyToOne(() => BlogPosts, (blogPosts) => blogPosts.id, {
     onDelete: 'CASCADE',
   })

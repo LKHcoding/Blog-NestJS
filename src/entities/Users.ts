@@ -168,7 +168,6 @@ export class Users {
   @OneToMany(() => BlogPostsLike, (likeDislike) => likeDislike.User)
   LikeDisLike: BlogPostsLike[];
 
-  @ApiProperty()
   @OneToMany(
     () => BlogPostsComment,
     (blogPostsComment) => blogPostsComment.User,

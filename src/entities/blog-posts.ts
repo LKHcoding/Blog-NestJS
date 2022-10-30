@@ -29,17 +29,16 @@ export class BlogPosts {
   @Column('varchar', { name: 'title', length: 100 })
   title: string;
 
-  @ApiProperty()
+  @ApiProperty({ type: () => BlogPostsTags })
   @ManyToMany(() => BlogPostsTags, (blogPostsTags) => blogPostsTags.BlogPosts)
   @JoinTable()
   Tags: BlogPostsTags[];
 
-  @ApiProperty()
-  @ManyToMany(
+  @ApiProperty({ type: () => [BlogPostsComment] })
+  @OneToMany(
     () => BlogPostsComment,
     (blogPostsComments) => blogPostsComments.BlogPost,
   )
-  @JoinTable()
   Comments: BlogPostsComment[];
 
   @ApiProperty()
@@ -63,7 +62,7 @@ export class BlogPosts {
   @Column('int', { name: 'UserId', nullable: false })
   UserId: number;
 
-  @ApiProperty()
+  @ApiProperty({ type: () => Users })
   @ManyToOne(() => Users, (users) => users.id)
   @JoinColumn([{ name: 'UserId', referencedColumnName: 'id' }])
   User: Users;
