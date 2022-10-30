@@ -15,17 +15,21 @@ import { ApiProperty } from '@nestjs/swagger';
 
 @Entity({ schema: 'nesttest', name: 'blog-posts-comment' })
 export class BlogPostsComment {
+  @ApiProperty()
   @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
   id: number;
 
+  @ApiProperty()
   @Index()
   @Column('int', { name: 'ParentCommentId', nullable: true })
   ParentCommentId: number | null;
 
+  @ApiProperty()
   @Index()
   @Column('int', { name: 'PostId', nullable: false })
   PostId: number;
 
+  @ApiProperty()
   @ManyToOne(() => BlogPosts, (blogPosts) => blogPosts.id, {
     onDelete: 'CASCADE',
   })
@@ -45,20 +49,25 @@ export class BlogPostsComment {
   })
   content: string;
 
+  @ApiProperty()
   @Index()
   @Column('int', { name: 'UserId', nullable: false })
   UserId: number;
 
+  @ApiProperty({ type: () => Users })
   @ManyToOne(() => Users, (users) => users.id)
   @JoinColumn([{ name: 'UserId', referencedColumnName: 'id' }])
   User: Users;
 
+  @ApiProperty()
   @CreateDateColumn()
   createdAt: Date;
 
+  @ApiProperty()
   @UpdateDateColumn()
   updatedAt: Date;
 
+  @ApiProperty()
   @DeleteDateColumn()
   deletedAt: Date | null;
 }

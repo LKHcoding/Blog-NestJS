@@ -393,7 +393,9 @@ export class BlogService {
   async findCommentInfoByPostId(postId: string) {
     return await this.blogPostsCommentRepository
       .createQueryBuilder('commentList')
+      .leftJoin('commentList.User', 'user')
       .where('commentList.postId = :postId', { postId })
+      .addSelect('user')
       .getMany();
   }
 
