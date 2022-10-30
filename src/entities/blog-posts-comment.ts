@@ -5,42 +5,32 @@ import {
   Entity,
   Index,
   JoinColumn,
-  JoinTable,
-  ManyToMany,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { BlogPostsLike } from './blog-posts-like';
-import { BlogPostsTags } from './blog-posts-tags';
+import { BlogPosts } from './blog-posts';
 import { Users } from './Users';
 import { ApiProperty } from '@nestjs/swagger';
-import { BlogPostsComment } from './blog-posts-comment';
 
-@Index('UserId', ['UserId'], {})
-@Entity({ schema: 'nesttest', name: 'blog-posts' })
-export class BlogPosts {
-  @ApiProperty()
+@Entity({ schema: 'nesttest', name: 'blog-posts-comment' })
+export class BlogPostsComment {
   @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
   id: number;
 
-  @ApiProperty()
-  @Column('varchar', { name: 'title', length: 100 })
-  title: string;
+  @Index()
+  @Column('int', { name: 'ParentCommentId', nullable: true })
+  ParentCommentId: number | null;
 
-  @ApiProperty()
-  @ManyToMany(() => BlogPostsTags, (blogPostsTags) => blogPostsTags.BlogPosts)
-  @JoinTable()
-  Tags: BlogPostsTags[];
+  @Index()
+  @Column('int', { name: 'PostId', nullable: false })
+  PostId: number;
 
-  @ApiProperty()
-  @ManyToMany(
-    () => BlogPostsComment,
-    (blogPostsComments) => blogPostsComments.BlogPost,
-  )
-  @JoinTable()
-  Comments: BlogPostsComment[];
+  @ManyToOne(() => BlogPosts, (blogPosts) => blogPosts.id, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn([{ name: 'PostId', referencedColumnName: 'id' }])
+  BlogPost: BlogPosts;
 
   @ApiProperty()
   // content 는 MarkDown 형식의 내용이 들어가기때문에
@@ -55,32 +45,20 @@ export class BlogPosts {
   })
   content: string;
 
-  @ApiProperty()
-  @Column('varchar', { name: 'thumbnail', length: 100 })
-  thumbnail: string;
-
-  @ApiProperty()
+  @Index()
   @Column('int', { name: 'UserId', nullable: false })
   UserId: number;
 
-  @ApiProperty()
   @ManyToOne(() => Users, (users) => users.id)
   @JoinColumn([{ name: 'UserId', referencedColumnName: 'id' }])
   User: Users;
 
-  @ApiProperty()
-  @OneToMany(() => BlogPostsLike, (likeDislike) => likeDislike.BlogPost)
-  LikeDisLike: BlogPostsLike;
-
-  @ApiProperty()
   @CreateDateColumn()
   createdAt: Date;
 
-  @ApiProperty()
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ApiProperty()
   @DeleteDateColumn()
   deletedAt: Date | null;
 }

@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { BlogPosts } from './blog-posts';
 import { BlogPostsLike } from './blog-posts-like';
+import { BlogPostsComment } from './blog-posts-comment';
 
 export enum UserRole {
   User = 'user',
@@ -93,4 +94,10 @@ export class Users {
 
   @OneToMany(() => BlogPostsLike, (likeDislike) => likeDislike.User)
   LikeDisLike: BlogPostsLike[];
+
+  @OneToMany(
+    () => BlogPostsComment,
+    (blogPostsComment) => blogPostsComment.User,
+  )
+  Comments: BlogPostsComment[];
 }

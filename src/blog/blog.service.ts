@@ -10,6 +10,8 @@ import { UsersService } from 'src/users/users.service';
 import { Repository } from 'typeorm';
 import { CreateBlogPostDto } from './dto/create-blog-post.dto';
 import { UpdateBlogPostDto } from './dto/update-blog-post.dto';
+import { BlogPostsComment } from '../entities/blog-posts-comment';
+import { CreateBlogCommentDto } from './dto/create-blog-comment.dto';
 
 @Injectable()
 export class BlogService {
@@ -20,6 +22,9 @@ export class BlogService {
     private blogPostsRepository: Repository<BlogPosts>,
     @InjectRepository(BlogPostsTags)
     private blogPostsTagsRepository: Repository<BlogPostsTags>,
+    @InjectRepository(BlogPostsComment)
+    private blogPostsCommentRepository: Repository<BlogPostsComment>,
+
     private usersService: UsersService,
     // for Algolia
     private readonly algoliaService: AlgoliaService,
@@ -383,5 +388,23 @@ export class BlogService {
       .addSelect('user.positionType')
       .addSelect('user.deletedAt')
       .getOne();
+  }
+
+  async findCommentInfoByPostId(postId: string) {
+    return await this.blogPostsCommentRepository
+      .createQueryBuilder('commentList')
+      .where('commentList.postId = :postId', { postId })
+      .getMany();
+  }
+
+  async createComment(createBlogPostData: CreateBlogCommentDto, user: UserDto) {
+    const { parentCommentId, content, postId } = createBlogPostData;
+
+    const comment = new BlogPostsComment();
+    comment.PostId = postId;
+    comment.content = content;
+    comment.UserId = user.id;
+    comment.ParentCommentId = parentCommentId ?? null;
+    return await this.blogPostsCommentRepository.save(comment);
   }
 }

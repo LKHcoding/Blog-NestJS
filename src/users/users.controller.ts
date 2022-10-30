@@ -2,13 +2,9 @@ import {
   Body,
   Controller,
   Get,
-  HttpException,
-  HttpStatus,
   Param,
   Post,
   Query,
-  Req,
-  Res,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -73,6 +69,11 @@ export class UsersController {
     name: 'loginID',
     required: true,
     description: '찾을 사용자 아이디',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '성공',
+    type: UserDto,
   })
   @ApiNotFoundResponse({ description: '해당 유저가 존재하지 않습니다' })
   @Get('/:loginID')

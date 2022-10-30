@@ -9,6 +9,7 @@ import { BlogPosts } from 'src/entities/blog-posts';
 import { BlogPostsLike } from 'src/entities/blog-posts-like';
 import { AlgoliaModule } from 'nestjs-algolia';
 import dotenv from 'dotenv';
+import { BlogPostsComment } from '../entities/blog-posts-comment';
 
 dotenv.config({
   path:
@@ -19,7 +20,13 @@ dotenv.config({
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Users, BlogPostsTags, BlogPosts, BlogPostsLike]),
+    TypeOrmModule.forFeature([
+      Users,
+      BlogPostsTags,
+      BlogPosts,
+      BlogPostsLike,
+      BlogPostsComment,
+    ]),
     AlgoliaModule.register({
       applicationId: process.env.ALGOLIA_APP_ID,
       apiKey: process.env.ALGOLIA_API_KEY,

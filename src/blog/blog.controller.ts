@@ -9,7 +9,14 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiCookieAuth,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Auth } from 'src/common/decorators/auth.decorator';
 import { User } from 'src/common/decorators/user.decorator';
 import { UserDto } from 'src/common/dto/user.dto';
@@ -21,13 +28,20 @@ import multer from 'multer';
 import path from 'path';
 import { UpdateBlogPostDto } from './dto/update-blog-post.dto';
 import { BlogPosts } from '../entities/blog-posts';
-import { ActionType } from '../entities/blog-posts-like';
+import { BlogPostsComment } from '../entities/blog-posts-comment';
+import { AuthLoginRequestDto } from '../auth/dto/auth-login.request.dto';
+import { CreateBlogCommentDto } from './dto/create-blog-comment.dto';
 
 try {
   fs.readdirSync('uploads');
 } catch (error) {
   console.error('uploads 폴더가 없어 uploads 폴더를 생성합니다.');
   fs.mkdirSync('uploads');
+}
+
+enum ActionType {
+  Like = 'Like',
+  DisLike = 'DisLike',
 }
 
 @ApiTags('BLOG')
@@ -163,6 +177,40 @@ export class BlogController {
     @Param('tag') tag: string,
   ) {
     return await this.blogService.findPostInfoByTagByUser(userID, tag);
+  }
+
+  // 게시글 별 코멘트 리스트 조회
+  @ApiCookieAuth('Authentication')
+  @ApiOperation({ summary: '게시글 별 코멘트 리스트 조회' })
+  @ApiResponse({
+    status: 200,
+    description: '성공',
+    type: [BlogPostsComment],
+  })
+  // comment list by postId
+  @Get('comment/:postId')
+  async getCommentInfoByPostId(@Param('postId') postId: string) {
+    return await this.blogService.findCommentInfoByPostId(postId);
+  }
+
+  // 게시글 별 코멘트 작성
+  @ApiCookieAuth('Authentication')
+  @ApiOperation({ summary: '게시글 별 코멘트 작성' })
+  @ApiResponse({
+    status: 201,
+    description: '성공',
+    type: [BlogPostsComment],
+  })
+  @ApiBody({
+    type: CreateBlogCommentDto,
+  })
+  @Auth(UserRole.User)
+  @Post('comment')
+  async postCommentByPostId(
+    @Body() createCommentData: CreateBlogCommentDto,
+    @User() user: UserDto,
+  ) {
+    return await this.blogService.createComment(createCommentData, user);
   }
 
   // @Patch(':id')
