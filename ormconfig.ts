@@ -15,7 +15,7 @@ dotenv.config({
 
 const config: TypeOrmModuleOptions = {
   type: 'mariadb',
-  host: 'localhost',
+  host: process.env.REMOTE_DB_HOST || process.env.DOMAIN,
   port: 3306,
   username: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,

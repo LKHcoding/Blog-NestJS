@@ -17,7 +17,7 @@ export class CreateBlogCommentDto {
     required: false,
   })
   @IsNumber()
-  @IsOptional()
+  @IsOptional(true)
   parentCommentId?: number;
 
   @ApiProperty({
