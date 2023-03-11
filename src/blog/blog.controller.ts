@@ -199,7 +199,7 @@ export class BlogController {
   @ApiResponse({
     status: 201,
     description: '성공',
-    type: [BlogPostsComment],
+    type: BlogPostsComment,
   })
   @ApiBody({
     type: CreateBlogCommentDto,
