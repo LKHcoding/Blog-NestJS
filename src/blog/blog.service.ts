@@ -372,6 +372,17 @@ export class BlogService {
       .getMany();
   }
 
+  //전체 게시글 정보 for sitemap
+  async findAllPostInfoForSitemap() {
+    return await this.blogPostsRepository
+      .createQueryBuilder('posts')
+      .select(['posts.id', 'posts.updatedAt'])
+      .leftJoin('posts.User', 'user')
+      .addSelect(['user.loginID'])
+      .orderBy('posts.createdAt', 'DESC')
+      .getMany();
+  }
+
   async algoliaFindPost(postId: number) {
     return await this.blogPostsRepository
       .createQueryBuilder('posts')

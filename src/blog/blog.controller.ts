@@ -170,6 +170,12 @@ export class BlogController {
     return await this.blogService.findAllPostInfo();
   }
 
+  // 전체 게시물 정보 for sitemap
+  @Get('all-posts-sitemap-info')
+  async getAllPostsSitemapInfo() {
+    return await this.blogService.findAllPostInfoForSitemap();
+  }
+
   // post list by tag by user
   @Get('posts-info-byTag/:userID/:tag')
   async getPostInfoByTagByUser(
@@ -178,7 +184,7 @@ export class BlogController {
   ) {
     return await this.blogService.findPostInfoByTagByUser(userID, tag);
   }
-
+  
   // 게시글 별 코멘트 리스트 조회
   @ApiCookieAuth('Authentication')
   @ApiOperation({ summary: '게시글 별 코멘트 리스트 조회' })
