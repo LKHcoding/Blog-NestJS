@@ -45,7 +45,9 @@ export class UsersService {
   }
 
   async findByGithubID(githubID: number): Promise<Users | false> {
-    const user = await this.usersRepository.findOne({ where: { githubID } });
+    const user = await this.usersRepository.findOne({
+      where: { githubID },
+    });
     if (user) {
       return user;
     }
@@ -53,7 +55,9 @@ export class UsersService {
   }
 
   async findByLoginID(loginID: string): Promise<Users | undefined> {
-    const user = await this.usersRepository.findOne({ where: { loginID } });
+    const user = await this.usersRepository.findOne({
+      where: { loginID },
+    });
     if (user) {
       return user;
     }

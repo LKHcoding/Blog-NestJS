@@ -81,9 +81,8 @@ export class UsersController {
     // const user = await this.usersRepository.findOne({ where: { email } });
     // console.log('this is getOneUser', param.loginID);
     // const { password, ...userdata } = await this.userService.findById(param.id);
-    const { password, ...userdata } = await this.userService.findByLoginID(
-      loginID,
-    );
+    const { password, ...userdata } =
+      await this.userService.findByLoginID(loginID);
     return userdata;
   }
 

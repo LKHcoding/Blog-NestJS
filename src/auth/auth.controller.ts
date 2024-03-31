@@ -170,9 +170,8 @@ export class AuthController {
   async getGithubSignUp(@Body() githubSignUpDto: GithubSignUpDto) {
     // console.log(githubSignUpDto);
     //회원가입 시켜야 할지 말지 처리하는곳
-    const githubUserResult = await this.userService.githubSignUpUser(
-      githubSignUpDto,
-    );
+    const githubUserResult =
+      await this.userService.githubSignUpUser(githubSignUpDto);
 
     //토큰 만들기 전 타입 변환
     const convertedUser: UserDto = {

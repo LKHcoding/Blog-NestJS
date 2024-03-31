@@ -1,3 +1,5 @@
+const prettierOptions = require('./.prettierrc.js');
+
 module.exports = {
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -25,7 +27,7 @@ module.exports = {
     'prettier/prettier': [
       'error',
       {
-        endOfLine: 'auto',
+        ...prettierOptions,
       },
     ],
   },
