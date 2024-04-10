@@ -55,7 +55,7 @@ export class BlogPosts {
   content: string;
 
   @ApiProperty()
-  @Column('varchar', { name: 'thumbnail', length: 100 })
+  @Column('varchar', { name: 'thumbnail', length: 200 })
   thumbnail: string;
 
   @ApiProperty()
