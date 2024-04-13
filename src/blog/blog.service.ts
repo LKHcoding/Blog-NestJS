@@ -361,6 +361,7 @@ export class BlogService {
       .leftJoin('posts.Tags', 'tags')
       .leftJoin('posts.LikeDisLike', 'likes')
       .leftJoin('posts.User', 'user')
+      .leftJoin('posts.Comments', 'comments')
       .orderBy('posts.createdAt', 'DESC')
       .addSelect('tags.tagName')
       .addSelect('likes.actionType')
@@ -369,6 +370,7 @@ export class BlogService {
       .addSelect('user.avatarUrl')
       .addSelect('user.positionType')
       .addSelect('user.deletedAt')
+      .addSelect('comments.UserId')
       .getMany();
   }
 

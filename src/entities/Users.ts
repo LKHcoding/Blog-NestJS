@@ -40,6 +40,7 @@ export class Users {
   @ApiProperty({
     example: 'NestMaster',
     description: 'githubID',
+    nullable: true,
   })
   @Column({ type: 'int', name: 'githubID', default: null })
   githubID: number | null;
@@ -49,14 +50,14 @@ export class Users {
     description: '이메일',
   })
   @Column('varchar', { name: 'email', length: 30, default: '' })
-  email: string | null;
+  email: string;
 
   @ApiProperty({
     example: 'NestMaster',
     description: '닉네임',
   })
   @Column('varchar', { name: 'nickname', length: 30, default: '' })
-  nickname: string | null;
+  nickname: string;
 
   @ApiProperty({
     example: 'NestMaster',
@@ -71,28 +72,28 @@ export class Users {
     description: 'blog url',
   })
   @Column('varchar', { name: 'blog', length: 200, default: '' })
-  blog: string | null;
+  blog: string;
 
   @ApiProperty({
     example: '웹 개발자 입니다.',
     description: '자기소개',
   })
   @Column('varchar', { name: 'bio', length: 200, default: '' })
-  bio: string | null;
+  bio: string;
 
   @ApiProperty({
     example: '',
     description: '프로필 사진 url',
   })
   @Column('varchar', { name: 'avatarUrl', length: 200, default: '' })
-  avatarUrl: string | null;
+  avatarUrl: string;
 
   @ApiProperty({
     example: '',
     description: 'Github url',
   })
   @Column('varchar', { name: 'githubPageUrl', length: 200, default: '' })
-  githubPageUrl: string | null;
+  githubPageUrl: string;
 
   // @Column('varchar', { name: 'password', length: 100, select: false })
   @Column('varchar', { name: 'password', length: 100 })
@@ -158,16 +159,29 @@ export class Users {
     example: null,
     description: '탈퇴 일자',
     required: true,
+    nullable: true,
   })
   @DeleteDateColumn()
   deletedAt: Date | null;
 
+  @ApiProperty({
+    type: () => BlogPosts,
+    isArray: true,
+  })
   @OneToMany(() => BlogPosts, (blogposts) => blogposts.User)
   Posts: BlogPosts[];
 
+  @ApiProperty({
+    type: () => BlogPostsLike,
+    isArray: true,
+  })
   @OneToMany(() => BlogPostsLike, (likeDislike) => likeDislike.User)
   LikeDisLike: BlogPostsLike[];
 
+  @ApiProperty({
+    type: () => BlogPostsComment,
+    isArray: true,
+  })
   @OneToMany(
     () => BlogPostsComment,
     (blogPostsComment) => blogPostsComment.User,

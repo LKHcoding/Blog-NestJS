@@ -29,12 +29,12 @@ export class BlogPosts {
   @Column('varchar', { name: 'title', length: 100 })
   title: string;
 
-  @ApiProperty({ type: () => BlogPostsTags })
+  @ApiProperty({ type: () => BlogPostsTags, isArray: true })
   @ManyToMany(() => BlogPostsTags, (blogPostsTags) => blogPostsTags.BlogPosts)
   @JoinTable()
   Tags: BlogPostsTags[];
 
-  @ApiProperty({ type: () => [BlogPostsComment] })
+  @ApiProperty({ type: () => BlogPostsComment, isArray: true })
   @OneToMany(
     () => BlogPostsComment,
     (blogPostsComments) => blogPostsComments.BlogPost,
@@ -67,9 +67,9 @@ export class BlogPosts {
   @JoinColumn([{ name: 'UserId', referencedColumnName: 'id' }])
   User: Users;
 
-  @ApiProperty()
+  @ApiProperty({ type: () => BlogPostsLike, isArray: true })
   @OneToMany(() => BlogPostsLike, (likeDislike) => likeDislike.BlogPost)
-  LikeDisLike: BlogPostsLike;
+  LikeDisLike: BlogPostsLike[];
 
   @ApiProperty()
   @CreateDateColumn()

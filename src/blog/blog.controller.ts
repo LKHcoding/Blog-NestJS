@@ -29,8 +29,8 @@ import path from 'path';
 import { UpdateBlogPostDto } from './dto/update-blog-post.dto';
 import { BlogPosts } from '../entities/blog-posts';
 import { BlogPostsComment } from '../entities/blog-posts-comment';
-import { AuthLoginRequestDto } from '../auth/dto/auth-login.request.dto';
 import { CreateBlogCommentDto } from './dto/create-blog-comment.dto';
+import { TagInfoResponseDto } from 'src/blog/dto/read-blog-tags-info.dto';
 
 try {
   fs.readdirSync('uploads');
@@ -120,6 +120,11 @@ export class BlogController {
 
   // 유저별 태그의 게시글 수 정보
   @Get('tags-info/:userID')
+  @ApiResponse({
+    status: 200,
+    description: '성공',
+    type: TagInfoResponseDto,
+  })
   async getTagsInfoListByUser(@Param('userID') userID: string) {
     return await this.blogService.findTagsInfoListByUser(userID);
   }
@@ -166,6 +171,11 @@ export class BlogController {
 
   // 전체 게시물 정보
   @Get('all-posts-info')
+  @ApiResponse({
+    status: 200,
+    description: '성공',
+    type: [BlogPosts],
+  })
   async getAllPostInfo() {
     return await this.blogService.findAllPostInfo();
   }
