@@ -26,7 +26,7 @@ const config: TypeOrmModuleOptions = {
   // entity 자동으로 불러오는 설정
   autoLoadEntities: true,
   charset: 'utf8mb4',
-  synchronize: true,
+  synchronize: false,
   logging: true,
   keepConnectionAlive: true,
   timezone: '+09:00',
