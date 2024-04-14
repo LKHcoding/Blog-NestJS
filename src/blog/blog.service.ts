@@ -279,40 +279,38 @@ export class BlogService {
       .leftJoin('posts.Tags', 'tags')
       .leftJoin('posts.User', 'user')
       .leftJoin('posts.LikeDisLike', 'likes')
+      .leftJoin('posts.Comments', 'comments')
       .where('user.loginID = :loginID', { loginID: userID })
       .addSelect('tags.tagName')
       .addSelect('likes.UserId')
       .addSelect('likes.actionType')
+      .addSelect('comments.UserId')
       .getMany();
   }
 
   async findPostInfoByTagByUser(userID: string, tag: string) {
     //하나의 태그를 어떤 게시물들에서 사용했는지 게시물 다 가져오기 (각 유저별로)
     return (
-      (
-        await this.blogPostsRepository
-          .createQueryBuilder('posts')
-          .leftJoin('posts.User', 'user')
-          .leftJoin('posts.Tags', 'tags')
-          .leftJoin('posts.LikeDisLike', 'likes')
-          .where('user.loginID = :loginID', { loginID: userID })
-          // .andWhere('tags.tagName @> ARRAY[:tag]', {
-          //   tag,
-          // })
-          .addSelect('tags.tagName')
-          // .andHaving('tags.tagName = :tag', { tag })
-          .addSelect('likes.UserId')
-          .addSelect('likes.actionType')
-          .getMany()
-      ).filter((item) => {
-        for (let index = 0; index < item.Tags.length; index++) {
-          if (item.Tags[index].tagName === tag) {
-            return true;
-          }
+      await this.blogPostsRepository
+        .createQueryBuilder('posts')
+        .leftJoin('posts.User', 'user')
+        .leftJoin('posts.Tags', 'tags')
+        .leftJoin('posts.LikeDisLike', 'likes')
+        .leftJoin('posts.Comments', 'comments')
+        .where('user.loginID = :loginID', { loginID: userID })
+        .addSelect('tags.tagName')
+        .addSelect('likes.UserId')
+        .addSelect('likes.actionType')
+        .addSelect('comments.UserId')
+        .getMany()
+    ).filter((item) => {
+      for (let index = 0; index < item.Tags.length; index++) {
+        if (item.Tags[index].tagName === tag) {
+          return true;
         }
-        return false;
-      })
-    );
+      }
+      return false;
+    });
   }
 
   //유저별 특정 게시물 정보

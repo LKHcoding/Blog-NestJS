@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Post,
+  Query,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -14,6 +15,7 @@ import {
   ApiCookieAuth,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -129,13 +131,27 @@ export class BlogController {
     return await this.blogService.findTagsInfoListByUser(userID);
   }
 
-  // 유저별 전체 게시물 정보
-  @Get('posts-info/:userID/:tag')
+  @Get('posts-info/:userID')
+  @ApiOperation({
+    summary: '유저별 전체 게시물 정보',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '성공',
+    type: [BlogPosts],
+  })
+  @ApiQuery({
+    name: 'tag',
+    type: String,
+    description: 'tag 별로 데이터 불러올때',
+    example: ['all', 'anyTagName'],
+    required: false,
+  })
   async getPostsInfoList(
     @Param('userID') userID: string,
-    @Param('tag') tag: string,
+    @Query('tag') tag?: string,
   ) {
-    if (tag === 'all') {
+    if (!tag || tag === 'all') {
       return await this.blogService.findPostsInfoList(userID);
     } else {
       return await this.blogService.findPostInfoByTagByUser(userID, tag);
