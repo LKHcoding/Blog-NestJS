@@ -280,11 +280,11 @@ export class BlogService {
       .leftJoin('posts.User', 'user')
       .leftJoin('posts.LikeDisLike', 'likes')
       .leftJoin('posts.Comments', 'comments')
+      .leftJoinAndSelect('comments.User', 'commentUser') // commentUser의 모든 필드를 포함
+      .addSelect(['comments.id', 'comments.content'])
+      .addSelect(['tags.tagName']) // tags에서는 tagName만 선택적으로 가져오기
+      .addSelect(['likes.UserId', 'likes.actionType']) // likes에서는 UserId와 actionType만 가져오기
       .where('user.loginID = :loginID', { loginID: userID })
-      .addSelect('tags.tagName')
-      .addSelect('likes.UserId')
-      .addSelect('likes.actionType')
-      .addSelect('comments.UserId')
       .getMany();
   }
 
@@ -297,11 +297,11 @@ export class BlogService {
         .leftJoin('posts.Tags', 'tags')
         .leftJoin('posts.LikeDisLike', 'likes')
         .leftJoin('posts.Comments', 'comments')
+        .leftJoinAndSelect('comments.User', 'commentUser')
         .where('user.loginID = :loginID', { loginID: userID })
-        .addSelect('tags.tagName')
-        .addSelect('likes.UserId')
-        .addSelect('likes.actionType')
-        .addSelect('comments.UserId')
+        .addSelect(['comments.id', 'comments.content'])
+        .addSelect(['tags.tagName'])
+        .addSelect(['likes.UserId', 'likes.actionType'])
         .getMany()
     ).filter((item) => {
       for (let index = 0; index < item.Tags.length; index++) {

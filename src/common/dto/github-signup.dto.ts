@@ -3,15 +3,9 @@ import { Type } from 'class-transformer';
 import {
   IsDefined,
   IsEnum,
-  IsInstance,
   IsNotEmptyObject,
-  isObject,
   IsObject,
-  IsString,
-  Validate,
-  validate,
   ValidateNested,
-  ValidatorConstraint,
 } from 'class-validator';
 import { DeveloperPositionType } from 'src/entities/Users';
 import { GithubUserInfoDTO } from './github-user-info.dto';

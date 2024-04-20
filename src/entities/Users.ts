@@ -11,6 +11,7 @@ import { BlogPosts } from './blog-posts';
 import { BlogPostsLike } from './blog-posts-like';
 import { BlogPostsComment } from './blog-posts-comment';
 import { ApiProperty } from '@nestjs/swagger';
+import { Exclude } from 'class-transformer';
 
 export enum UserRole {
   User = 'user',
@@ -96,6 +97,9 @@ export class Users {
   githubPageUrl: string;
 
   // @Column('varchar', { name: 'password', length: 100, select: false })
+  @Exclude({
+    toPlainOnly: true, // request 허용, response X
+  })
   @Column('varchar', { name: 'password', length: 100 })
   password: string;
 
@@ -187,4 +191,8 @@ export class Users {
     (blogPostsComment) => blogPostsComment.User,
   )
   Comments: BlogPostsComment[];
+
+  constructor(partial: Partial<Users>) {
+    Object.assign(this, partial);
+  }
 }
